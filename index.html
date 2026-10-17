@@ -2,111 +2,30 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-<meta name="theme-color" content="#1e1e1e">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>محرري الذكي</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs/editor/editor.main.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/dracula.min.css">
 <style>
-* { margin: 0; padding: 0; box-sizing: border-box; -webkit-box-sizing: border-box; }
-:root { --bg:#1e1e1e; --panel:#252526; --border:#333; --text:#fff; --accent:#0e639c; --accent-hover:#1177bb; }
-body.light { --bg:#f5f5f5; --panel:#fff; --border:#ddd; --text:#333; }
-html, body { height: 100%; }
-body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, Roboto, Arial, sans-serif;
-  background: var(--bg); color: var(--text);
-  height: 100vh; height: 100dvh;
-  display: flex; flex-direction: column; overflow: hidden;
-  -webkit-font-smoothing: antialiased; -webkit-tap-highlight-color: transparent;
-}
-header {
-  background: var(--panel); padding: 8px; border-bottom: 1px solid var(--border);
-  display: flex; flex-direction: column; gap: 8px; flex-shrink: 0;
-}
-.header-top { display: flex; justify-content: space-between; align-items: center; padding: 0 8px;}
-header h1 { font-size: 16px; color: #4ec9b0; white-space: nowrap; margin: 0; }
-.toolbar { 
-  display: flex; gap: 6px; align-items: center; overflow-x: auto; padding-bottom: 4px;
-  -webkit-overflow-scrolling: touch; scrollbar-width: none;
-}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: sans-serif; background: #1e1e1e; color: #fff; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+header { background: #252526; padding: 8px; border-bottom: 1px solid #333; display: flex; flex-direction: column; gap: 8px; }
+.header-top { display: flex; justify-content: space-between; padding: 0 8px; }
+header h1 { font-size: 16px; color: #4ec9b0; }
+.toolbar { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; }
 .toolbar::-webkit-scrollbar { display: none; }
-select, button {
-  background: var(--accent); color: #fff; border: none;
-  padding: 8px 12px; border-radius: 4px; cursor: pointer;
-  font-family: inherit; font-size: 13px; white-space: nowrap;
-  -webkit-appearance: none; appearance: none;
-  -webkit-user-select: none; user-select: none; flex-shrink: 0;
-}
-select {
-  background: #3c3c3c;
-  background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5' viewBox='0 0 8 5'%3E%3Cpath fill='%23fff' d='M0 0l4 5 4-5z'/%3E%3C/svg%3E");
-  background-repeat: no-repeat; background-position: left 8px center; padding-left: 24px;
-}
-button:hover { background: var(--accent-hover); }
-button.small { padding: 6px 10px; font-size: 12px; }
-button.icon { background: transparent; padding: 6px 10px; }
-
-.tabs-bar {
-  display: flex; background: var(--panel); border-bottom: 1px solid var(--border);
-  overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch; flex-shrink: 0;
-}
-.tab {
-  display: flex; align-items: center; gap: 8px; padding: 10px 12px; cursor: pointer;
-  border-left: 1px solid var(--border); font-size: 13px; white-space: nowrap; flex-shrink: 0;
-}
-.tab.active { background: var(--bg); border-bottom: 2px solid #4ec9b0; }
-.tab .close { opacity: 0.5; padding: 0 8px; font-size: 16px; }
-.tab-add { padding: 8px 16px; cursor: pointer; font-size: 20px; }
-
-.container { display: flex; flex: 1; overflow: hidden; min-height: 0; }
-#editor { flex: 1; height: 100%; min-width: 100px; min-height: 150px; }
-#preview { flex: 1; background: #fff; border: none; min-width: 100px; min-height: 150px; }
-.resizer { width: 5px; background: var(--border); cursor: col-resize; touch-action: none; flex-shrink: 0; }
-
-.split-horizontal { flex-direction: column; }
-.split-horizontal .resizer { width: 100%; height: 10px; cursor: row-resize; }
-.hide-preview #preview, .hide-preview .resizer { display: none; }
-.hide-editor #editor, .hide-editor .resizer { display: none; }
-
-.console-panel {
-  height: 150px; background: var(--panel); border-top: 1px solid var(--border);
-  display: flex; flex-direction: column; overflow: hidden; transition: height 0.2s ease; flex-shrink: 0;
-}
-.console-panel.collapsed { height: 32px; }
-.console-header { padding: 6px 12px; font-size: 12px; display: flex; justify-content: space-between; cursor: pointer; background: #2d2d2d; }
-.console-body { flex: 1; overflow-y: auto; font-family: monospace; font-size: 12px; padding: 4px 12px; }
-.console-line { padding: 2px 0; border-bottom: 1px solid rgba(255,255,255,0.05); word-break: break-all; }
+button, select { background: #0e639c; color: #fff; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 13px; white-space: nowrap; }
+select { background: #3c3c3c; }
+button:hover { background: #1177bb; }
+.container { display: flex; flex: 1; overflow: hidden; flex-direction: column; }
+#editorWrapper { flex: 1; overflow: hidden; position: relative; min-height: 200px;}
+.CodeMirror { height: 100% !important; font-size: 14px; direction: ltr; text-align: left; }
+#preview { flex: 1; background: #fff; border: none; min-height: 200px; }
+.console-panel { height: 120px; background: #252526; border-top: 1px solid #333; display: flex; flex-direction: column; flex-shrink: 0; }
+.console-header { padding: 6px; font-size: 12px; background: #2d2d2d; cursor: pointer; display: flex; justify-content: space-between; }
+.console-body { flex: 1; overflow-y: auto; font-family: monospace; font-size: 12px; padding: 4px; }
+.console-line { border-bottom: 1px solid #333; padding: 2px 0; color: #4ec9b0; }
 .console-line.error { color: #f48771; }
-.console-line.warn { color: #dcdcaa; }
-.console-line.log { color: #4ec9b0; }
-
-.status-bar {
-  background: var(--accent); color: #fff; padding: 4px 12px; font-size: 12px;
-  display: flex; justify-content: space-between; flex-wrap: wrap; gap: 4px; flex-shrink: 0;
-}
-
-.modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 16px; }
-.modal.open { display: flex; }
-.modal-content { background: var(--panel); padding: 20px; border-radius: 8px; max-width: 600px; width: 100%; max-height: 80vh; overflow-y: auto; }
-.close-modal { float: left; cursor: pointer; font-size: 20px; padding: 4px; }
-.snippet-item { padding: 12px; margin-bottom: 8px; background: var(--bg); border: 1px solid var(--border); border-radius: 4px; cursor: pointer; }
-.snippet-item h3 { font-size: 14px; margin-bottom: 4px; color: #4ec9b0; }
-.snippet-item p { font-size: 12px; opacity: 0.7; }
-
-.toast { position: fixed; bottom: 50px; left: 50%; transform: translateX(-50%); background: var(--accent); color: #fff; padding: 10px 20px; border-radius: 4px; opacity: 0; transition: opacity 0.3s; z-index: 2000; pointer-events: none; }
-.toast.show { opacity: 1; }
-input[type="file"] { display: none !important; }
-
-@media (max-width: 768px) {
-  header { padding: 6px; }
-  header h1 { font-size: 15px; }
-  .container { flex-direction: column; }
-  .resizer { width: 100%; height: 8px; cursor: row-resize; }
-  #editor, #preview { min-height: 200px; }
-  .console-panel { height: 110px; }
-  .console-panel.collapsed { height: 28px; }
-  button, select { padding: 6px 10px; font-size: 12px; }
-}
 </style>
 </head>
 <body>
@@ -115,340 +34,120 @@ input[type="file"] { display: none !important; }
     <h1>🧠 محرري الذكي</h1>
   </div>
   <div class="toolbar">
-    <select id="langSelect">
-      <option value="html">HTML</option>
+    <select id="langSelect" onchange="changeLang()">
+      <option value="htmlmixed">HTML</option>
       <option value="javascript">JS</option>
       <option value="css">CSS</option>
     </select>
-    <select id="splitSelect">
-      <option value="split">جنب لجنب</option>
-      <option value="split-horizontal">فوق وتحت</option>
-      <option value="editor-only">المحرر فقط</option>
-      <option value="preview-only">المعاينة فقط</option>
-    </select>
     <button onclick="runCode()">▶ شغّل</button>
-    <button onclick="formatCode()">✨ تنسيق</button>
     <button onclick="copyCode()">📋 نسخ</button>
     <button onclick="downloadFile()">⬇ تحميل</button>
-    <button onclick="triggerUpload()">⬆ رفع</button>
-    <button onclick="openSnippets()">📚 أمثلة</button>
-    <button class="small" onclick="changeFontSize(-1)">A−</button>
-    <button class="small" onclick="changeFontSize(1)">A+</button>
+    <button onclick="loadDefault()">📄 كود جديد</button>
   </div>
-  <input type="file" id="fileInput" accept=".html,.js,.css,.txt">
 </header>
 
-<div class="tabs-bar" id="tabsBar"></div>
-
-<div class="container" id="mainContainer">
-  <div id="editor"></div>
-  <div class="resizer" id="resizer"></div>
+<div class="container">
+  <div id="editorWrapper"><textarea id="codeArea"></textarea></div>
   <iframe id="preview"></iframe>
 </div>
 
-<div class="console-panel" id="consolePanel">
+<div class="console-panel">
   <div class="console-header" onclick="toggleConsole()">
-    <span>🖥 Console <span id="consoleCount">(0)</span></span>
+    <span>🖥 Console</span>
     <span>▼</span>
   </div>
   <div class="console-body" id="consoleBody"></div>
 </div>
 
-<div class="status-bar">
-  <span id="statusInfo">سطر 1</span>
-  <span id="statusStats">0 كلمة</span>
-</div>
-
-<div class="modal" id="snippetsModal" onclick="if(event.target===this)closeSnippets()">
-  <div class="modal-content">
-    <span class="close-modal" onclick="closeSnippets()">✕</span>
-    <h2 style="margin-bottom:15px;color:#4ec9b0">📚 أمثلة جاهزة</h2>
-    <div id="snippetsList"></div>
-  </div>
-</div>
-
-<div class="toast" id="toast"></div>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs/loader.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prettier/3.1.0/standalone.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prettier/3.1.0/plugins/html.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prettier/3.1.0/plugins/postcss.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prettier/3.1.0/plugins/babel.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/xml/xml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/css/css.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/htmlmixed/htmlmixed.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closebrackets.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/matchbrackets.min.js"></script>
 
 <script>
-(function(){
-'use strict';
-var state = { tabs: [], activeTabId: null, models: {}, consoleCount: 0, debounceTimer: null };
-var editor = null;
-var tabCounter = 0;
-var STORAGE_KEY = 'smart_editor_v3';
+var DEFAULT_CODE = '<!DOCTYPE html>\n<html lang="ar" dir="rtl">\n<head>\n  <meta charset="UTF-8">\n  <style>\n    body { font-family:sans-serif; text-align:center; padding:50px; background:#f0f0f0; }\n    h1 { color: #4CAF50; }\n  </style>\n</head>\n<body>\n  <h1>مرحبا بالعالم 👋</h1>\n  <p>جرب تكتب كودك هنا!</p>\n  <button onclick="console.log(\'تم الضغط!\')">اضغطني</button>\n  <script>console.log("أهلاً بيك في المحرر!");<\/script>\n</body>\n</html>';
 
-var DEFAULT_CODE = '<!DOCTYPE html>\n<html lang="ar" dir="rtl">\n<head>\n  <meta charset="UTF-8">\n  <style>\n    body { font-family:system-ui; text-align:center; padding:50px; background:linear-gradient(135deg,#667eea,#764ba2); color:white; }\n    button { padding:12px 24px; font-size:16px; border:none; border-radius:8px; cursor:pointer; background:white; color:#333; }\n  </style>\n</head>\n<body>\n  <h1>مرحبا بالعالم 👋</h1>\n  <p>ابدأ اكتب كودك هنا وشوف النتيجة فوراً!</p>\n  <button onclick="console.log(\'تم الضغط!\')">اضغطني</button>\n  <script>console.log("أهلاً بيك في المحرر الذكي!");<\/script>\n</body>\n</html>';
+var editor = CodeMirror.fromTextArea(document.getElementById("codeArea"), {
+  lineNumbers: true,
+  mode: "htmlmixed",
+  theme: "dracula",
+  autoCloseBrackets: true,
+  matchBrackets: true,
+  lineWrapping: true,
+  indentUnit: 4
+});
 
-var SNIPPETS = [
-  {name:'زر تفاعلي', desc:'زر مع تأثير Hover', lang:'html', code:'<button class="btn">اضغطني</button>\n<style>\n.btn { padding:12px 24px; background:#4CAF50; color:white; border:none; border-radius:8px; cursor:pointer; }\n.btn:hover { background:#45a049; transform:scale(1.05); }\n</style>'},
-  {name:'Fetch API', desc:'جلب بيانات', lang:'javascript', code:'fetch("https://jsonplaceholder.typicode.com/posts/1")\n  .then(function(r){ return r.json(); })\n  .then(function(d){ console.log(d); });'}
-];
+editor.setValue(DEFAULT_CODE);
 
-window.showToast = function(msg){
-  var t = document.getElementById('toast');
-  if(!t) return;
-  t.textContent = msg; t.classList.add('show');
-  clearTimeout(t._t); t._t = setTimeout(function(){ t.classList.remove('show'); }, 1800);
-};
+var CONSOLE_INJECT = '<script>(function(){var s=function(l,a){try{parent.postMessage({type:"console",level:l,args:a.map(function(x){try{return typeof x==="object"?JSON.stringify(x):String(x);}catch(e){return String(x);}})}, "*");}catch(e){}};["log","error","warn","info"].forEach(function(m){var o=console[m];console[m]=function(){var a=[].slice.call(arguments);s(m,a);if(o)o.apply(console,a);};});window.onerror=function(msg,url,line){s("error",[msg+(line?" (سطر "+line+")":"")]);};})();<\/script>';
 
-function debounce(fn, wait){
-  return function(){ var ctx = this, args = arguments; clearTimeout(state.debounceTimer); state.debounceTimer = setTimeout(function(){ fn.apply(ctx, args); }, wait); };
-}
-
-function getActiveModel(){ return state.activeTabId ? state.models[state.activeTabId] : null; }
-function getModelValue(){ var m = getActiveModel(); return m ? m.getValue() : ''; }
-
-function saveToStorage(){
-  try {
-    var data = { tabs: state.tabs.map(function(t){ var m = state.models[t.id]; return { id: t.id, name: t.name, language: t.language, content: m ? m.getValue() : '' }; }), activeTabId: state.activeTabId };
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-  } catch(e){}
-}
-
-function createTab(name, language, content){
-  var id = 'tab_' + (++tabCounter);
-  var model = monaco.editor.createModel(content, language || 'html');
-  state.models[id] = model;
-  state.tabs.push({ id: id, name: name || ('ملف ' + tabCounter), language: language || 'html' });
-  model.onDidChangeContent(debounce(function(){ saveToStorage(); updateStatus(); runCode(); }, 500));
-  return id;
-}
-
-window.addNewTab = function(content, language, name){
-  var id = createTab(name, language, content || '<!-- كود جديد -->');
-  switchTab(id); renderTabs();
-};
-
-function switchTab(id){
-  if(!state.models[id]) return;
-  state.activeTabId = id;
-  editor.setModel(state.models[id]);
-  var t = null;
-  for(var i=0; i<state.tabs.length; i++){ if(state.tabs[i].id === id){ t = state.tabs[i]; break; } }
-  if(t){ document.getElementById('langSelect').value = t.language; monaco.editor.setModelLanguage(state.models[id], t.language); }
-  renderTabs(); updateStatus(); saveToStorage();
-}
-
-function closeTab(id, ev){
-  if(ev){ ev.stopPropagation(); ev.preventDefault(); }
-  var idx = -1;
-  for(var i=0; i<state.tabs.length; i++){ if(state.tabs[i].id === id){ idx = i; break; } }
-  if(idx === -1) return;
-  state.tabs.splice(idx, 1);
-  if(state.models[id]) state.models[id].dispose();
-  delete state.models[id];
-  if(state.activeTabId === id){
-    if(state.tabs.length > 0) switchTab(state.tabs[Math.min(idx, state.tabs.length - 1)].id);
-    else { state.activeTabId = null; editor.setModel(null); }
-  }
-  renderTabs(); saveToStorage();
-}
-
-function renderTabs(){
-  var bar = document.getElementById('tabsBar'); bar.innerHTML = '';
-  var addBtn = document.createElement('div'); addBtn.className = 'tab-add'; addBtn.textContent = '+';
-  addBtn.onclick = function(){ addNewTab(); }; bar.appendChild(addBtn);
-  state.tabs.forEach(function(t){
-    var d = document.createElement('div'); d.className = 'tab' + (t.id === state.activeTabId ? ' active' : '');
-    d.onclick = function(){ switchTab(t.id); };
-    var nameSpan = document.createElement('span'); nameSpan.textContent = t.name; d.appendChild(nameSpan);
-    var closeSpan = document.createElement('span'); closeSpan.className = 'close'; closeSpan.textContent = '✕';
-    closeSpan.onclick = function(e){ closeTab(t.id, e); }; d.appendChild(closeSpan);
-    bar.appendChild(d);
-  });
-}
-
-function initEditor(){
-  var isMobile = window.innerWidth <= 768;
-  if(isMobile) {
-    document.getElementById('splitSelect').value = 'split-horizontal';
-    document.getElementById('mainContainer').classList.add('split-horizontal');
-  }
-
-  require.config({ paths: { vs: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs' } });
-  
-  require(['vs/editor/editor.main'], function() {
-    editor = monaco.editor.create(document.getElementById('editor'), {
-      theme: 'vs-dark',
-      fontSize: isMobile ? 13 : 14,
-      automaticLayout: true,
-      minimap: { enabled: !isMobile },
-      wordWrap: 'on',
-      scrollBeyondLastLine: false,
-      fontFamily: 'Consolas, Monaco, monospace'
-    });
-
-    editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, runCode);
-    editor.onDidChangeCursorPosition(function(e){
-      document.getElementById('statusInfo').textContent = 'سطر ' + e.position.lineNumber + '، عمود ' + e.position.column;
-    });
-
-    var saved = null;
-    try { saved = JSON.parse(localStorage.getItem(STORAGE_KEY)); } catch(e){}
-    
-    if(saved && saved.tabs && saved.tabs.length > 0){
-      saved.tabs.forEach(function(t){
-        var m = monaco.editor.createModel(t.content, t.language);
-        state.models[t.id] = m; state.tabs.push({ id: t.id, name: t.name, language: t.language });
-        var num = parseInt(t.id.replace('tab_', ''), 10) || 0; if(num > tabCounter) tabCounter = num;
-        m.onDidChangeContent(debounce(function(){ saveToStorage(); updateStatus(); runCode(); }, 500));
-      });
-      switchTab(saved.activeTabId && state.models[saved.activeTabId] ? saved.activeTabId : state.tabs[0].id);
-    } else {
-      addNewTab(DEFAULT_CODE, 'html', 'index.html');
-    }
-    renderTabs(); updateStatus(); runCode();
-  });
-}
-
-var CONSOLE_INJECT = '<script>(function(){var s=function(l,a){try{parent.postMessage({type:"console",level:l,args:a.map(function(x){try{return typeof x==="object"&&x!==null?JSON.stringify(x):String(x);}catch(e){return String(x);}})}, "*");}catch(e){}};["log","error","warn","info"].forEach(function(m){var o=console[m];console[m]=function(){var a=[].slice.call(arguments);s(m,a);if(o)o.apply(console,a);};});window.onerror=function(msg,url,line){s("error",[msg+(line?" (سطر "+line+")":"")]);};})();<\/script>';
-
-window.runCode = function(){
-  if(!state.activeTabId) return;
-  var code = getModelValue();
+function runCode() {
+  var code = editor.getValue();
   var lang = document.getElementById('langSelect').value;
   var preview = document.getElementById('preview');
-  document.getElementById('consoleBody').innerHTML = ''; state.consoleCount = 0;
-  document.getElementById('consoleCount').textContent = '(0)';
+  document.getElementById('consoleBody').innerHTML = '';
   
   var srcdoc = '';
-  if(lang === 'html'){
+  if(lang === 'htmlmixed') {
     if(code.indexOf('</head>') !== -1) srcdoc = code.replace('</head>', CONSOLE_INJECT + '</head>');
     else if(/<body[^>]*>/i.test(code)) srcdoc = code.replace(/<body[^>]*>/i, function(m){ return m + CONSOLE_INJECT; });
     else srcdoc = CONSOLE_INJECT + code;
-  } else if(lang === 'javascript'){
+  } else if(lang === 'javascript') {
     srcdoc = CONSOLE_INJECT + '<body style="font-family:monospace;padding:20px;background:#1e1e1e;color:#fff"><script>' + code + '<\/script></body>';
   } else {
     srcdoc = '<pre style="padding:20px;font-family:monospace">هذه اللغة غير مدعومة للمعاينة.</pre>';
   }
   preview.srcdoc = srcdoc;
-  updateStatus();
-};
+}
 
-window.addEventListener('message', function(e){
-  if(e.data && e.data.type === 'console'){
+window.addEventListener('message', function(e) {
+  if(e.data && e.data.type === 'console') {
     var b = document.getElementById('consoleBody');
     var l = document.createElement('div');
     l.className = 'console-line ' + (e.data.level || 'log');
     l.textContent = '› ' + (e.data.args || []).join(' ');
     b.appendChild(l); b.scrollTop = b.scrollHeight;
-    state.consoleCount++; document.getElementById('consoleCount').textContent = '(' + state.consoleCount + ')';
   }
 });
 
-window.toggleConsole = function(){ document.getElementById('consolePanel').classList.toggle('collapsed'); };
-
-function copyTextToClipboard(text, onSuccess, onError){
-  if(navigator.clipboard && navigator.clipboard.writeText){
-    navigator.clipboard.writeText(text).then(onSuccess).catch(function(){ legacyCopy(text, onSuccess, onError); });
-  } else { legacyCopy(text, onSuccess, onError); }
-}
-
-function legacyCopy(text, onSuccess, onError){
-  try {
-    var ta = document.createElement('textarea'); ta.value = text;
-    ta.style.position = 'fixed'; ta.style.left = '-9999px';
-    document.body.appendChild(ta); ta.select();
-    var ok = document.execCommand('copy'); document.body.removeChild(ta);
-    if(ok && onSuccess) onSuccess(); else if(onError) onError();
-  } catch(e){ if(onError) onError(); }
-}
-
-window.copyCode = function(){
-  if(!getActiveModel()) return;
-  copyTextToClipboard(getModelValue(), function(){ showToast('✅ تم النسخ'); }, function(){ prompt('انسخ يدوياً:', getModelValue()); });
-};
-
-window.downloadFile = function(){
-  if(!getActiveModel()) return;
+function changeLang() {
   var lang = document.getElementById('langSelect').value;
-  var extMap = { html:'html', javascript:'js', css:'css' };
-  var ext = extMap[lang] || 'txt';
-  var blob = new Blob([getModelValue()], { type: 'text/plain;charset=utf-8' });
-  var a = document.createElement('a'); a.href = URL.createObjectURL(blob);
-  a.download = 'code.' + ext; document.body.appendChild(a); a.click();
-  setTimeout(function(){ URL.revokeObjectURL(a.href); document.body.removeChild(a); }, 100);
-  showToast('⬇ تم التحميل');
-};
-
-window.triggerUpload = function(){ document.getElementById('fileInput').click(); };
-
-document.getElementById('fileInput').addEventListener('change', function(e){
-  var f = e.target.files[0]; if(!f) return;
-  var reader = new FileReader();
-  reader.onload = function(ev){
-    var ext = f.name.split('.').pop().toLowerCase();
-    var map = { html:'html', js:'javascript', css:'css' };
-    addNewTab(ev.target.result, map[ext] || 'plaintext', f.name);
-    showToast('⬆ تم الرفع');
-  };
-  reader.readAsText(f); e.target.value = '';
-});
-
-window.formatCode = function(){
-  if(!getActiveModel()) return;
-  var code = getModelValue(); var lang = document.getElementById('langSelect').value;
-  if(typeof prettier === 'undefined') return showToast('⚠ Prettier لم يُحمل');
-  var promise = null;
-  if(lang === 'html') promise = prettier.format(code, { parser: 'html', plugins: [prettierPlugins.html] });
-  else if(lang === 'css') promise = prettier.format(code, { parser: 'css', plugins: [prettierPlugins.postcss] });
-  else if(lang === 'javascript') promise = prettier.format(code, { parser: 'babel', plugins: [prettierPlugins.babel] });
-  else return showToast('⚠ التنسيق غير مدعوم');
-
-  if(promise) promise.then(function(f){ editor.setValue(f); showToast('✨ تم التنسيق'); }).catch(function(e){ showToast('❌ خطأ في التنسيق'); });
-};
-
-window.changeFontSize = function(d){
-  if(!editor) return;
-  var cur = editor.getOption(monaco.editor.EditorOption.fontSize);
-  editor.updateOptions({ fontSize: Math.max(10, Math.min(30, cur + d)) });
-  showToast('حجم الخط تغير');
-};
-
-document.getElementById('langSelect').addEventListener('change', function(e){
-  var m = getActiveModel(); if(!m) return;
-  monaco.editor.setModelLanguage(m, e.target.value);
-  for(var i=0; i<state.tabs.length; i++){ if(state.tabs[i].id === state.activeTabId){ state.tabs[i].language = e.target.value; break; } }
-  saveToStorage(); runCode();
-});
-
-document.getElementById('splitSelect').addEventListener('change', function(e){
-  var c = document.getElementById('mainContainer');
-  c.classList.remove('split-horizontal', 'hide-preview', 'hide-editor');
-  if(e.target.value === 'split-horizontal') c.classList.add('split-horizontal');
-  else if(e.target.value === 'editor-only') c.classList.add('hide-preview');
-  else if(e.target.value === 'preview-only') c.classList.add('hide-editor');
-  if(editor) setTimeout(function(){ editor.layout(); }, 100);
-});
-
-window.openSnippets = function(){
-  var list = document.getElementById('snippetsList'); list.innerHTML = '';
-  SNIPPETS.forEach(function(s){
-    var d = document.createElement('div'); d.className = 'snippet-item';
-    d.innerHTML = '<h3>' + s.name + '</h3><p>' + s.desc + '</p>';
-    d.onclick = function(){ addNewTab(s.code, s.lang, s.name); closeSnippets(); showToast('✅ تم الإضافة'); };
-    list.appendChild(d);
-  });
-  document.getElementById('snippetsModal').classList.add('open');
-};
-
-window.closeSnippets = function(){ document.getElementById('snippetsModal').classList.remove('open'); };
-
-function updateStatus(){
-  var m = getActiveModel(); if(!m) return;
-  var t = m.getValue();
-  document.getElementById('statusStats').textContent = m.getLineCount() + ' سطر | ' + t.length + ' حرف';
+  editor.setOption("mode", lang);
 }
 
-initEditor();
-window.addEventListener('beforeunload', saveToStorage);
-})();
+function copyCode() {
+  navigator.clipboard.writeText(editor.getValue()).then(function(){ alert('تم النسخ!'); });
+}
+
+function downloadFile() {
+  var blob = new Blob([editor.getValue()], {type: 'text/plain;charset=utf-8'});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'code.html';
+  a.click();
+}
+
+function loadDefault() {
+  editor.setValue(DEFAULT_CODE);
+  document.getElementById('langSelect').value = 'htmlmixed';
+  changeLang();
+  runCode();
+}
+
+function toggleConsole() {
+  var p = document.querySelector('.console-panel');
+  p.style.height = p.style.height === '32px' ? '120px' : '32px';
+}
+
+editor.on("change", function() {
+  clearTimeout(window.debounceTimer);
+  window.debounceTimer = setTimeout(runCode, 500);
+});
+
+runCode();
 </script>
 </body>
 </html>
