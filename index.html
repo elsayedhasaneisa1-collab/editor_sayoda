@@ -7,10 +7,9 @@
 <meta name="theme-color" content="#1e1e1e">
 <title>محرري الذكي</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs/editor/editor.main.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; -webkit-box-sizing: border-box; }
-:root { --bg:#1e1e1e; --panel:#252526; --border:#333; --text:#fff; --accent:#0e639c; --accent-hover:#1177bb; --ai:#6a3d9a; }
+:root { --bg:#1e1e1e; --panel:#252526; --border:#333; --text:#fff; --accent:#0e639c; --accent-hover:#1177bb; }
 body.light { --bg:#f5f5f5; --panel:#fff; --border:#ddd; --text:#333; }
 html, body { height: 100%; }
 body {
@@ -22,18 +21,15 @@ body {
 }
 header {
   background: var(--panel); padding: 8px; border-bottom: 1px solid var(--border);
-  display: flex; flex-direction: column; gap: 8px;
+  display: flex; flex-direction: column; gap: 8px; flex-shrink: 0;
 }
 .header-top { display: flex; justify-content: space-between; align-items: center; padding: 0 8px;}
 header h1 { font-size: 16px; color: #4ec9b0; white-space: nowrap; margin: 0; }
-
-/* شريط الأدوات بيتسحب بالعرض على الموبايل */
 .toolbar { 
   display: flex; gap: 6px; align-items: center; overflow-x: auto; padding-bottom: 4px;
   -webkit-overflow-scrolling: touch; scrollbar-width: none;
 }
 .toolbar::-webkit-scrollbar { display: none; }
-
 select, button {
   background: var(--accent); color: #fff; border: none;
   padding: 8px 12px; border-radius: 4px; cursor: pointer;
@@ -47,13 +43,12 @@ select {
   background-repeat: no-repeat; background-position: left 8px center; padding-left: 24px;
 }
 button:hover { background: var(--accent-hover); }
-button.ai { background: var(--ai); }
 button.small { padding: 6px 10px; font-size: 12px; }
 button.icon { background: transparent; padding: 6px 10px; }
 
 .tabs-bar {
   display: flex; background: var(--panel); border-bottom: 1px solid var(--border);
-  overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch;
+  overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch; flex-shrink: 0;
 }
 .tab {
   display: flex; align-items: center; gap: 8px; padding: 10px 12px; cursor: pointer;
@@ -66,7 +61,7 @@ button.icon { background: transparent; padding: 6px 10px; }
 .container { display: flex; flex: 1; overflow: hidden; min-height: 0; }
 #editor { flex: 1; height: 100%; min-width: 100px; min-height: 150px; }
 #preview { flex: 1; background: #fff; border: none; min-width: 100px; min-height: 150px; }
-.resizer { width: 5px; background: var(--border); cursor: col-resize; touch-action: none; }
+.resizer { width: 5px; background: var(--border); cursor: col-resize; touch-action: none; flex-shrink: 0; }
 
 .split-horizontal { flex-direction: column; }
 .split-horizontal .resizer { width: 100%; height: 10px; cursor: row-resize; }
@@ -75,7 +70,7 @@ button.icon { background: transparent; padding: 6px 10px; }
 
 .console-panel {
   height: 150px; background: var(--panel); border-top: 1px solid var(--border);
-  display: flex; flex-direction: column; overflow: hidden; transition: height 0.2s ease;
+  display: flex; flex-direction: column; overflow: hidden; transition: height 0.2s ease; flex-shrink: 0;
 }
 .console-panel.collapsed { height: 32px; }
 .console-header { padding: 6px 12px; font-size: 12px; display: flex; justify-content: space-between; cursor: pointer; background: #2d2d2d; }
@@ -87,7 +82,7 @@ button.icon { background: transparent; padding: 6px 10px; }
 
 .status-bar {
   background: var(--accent); color: #fff; padding: 4px 12px; font-size: 12px;
-  display: flex; justify-content: space-between; flex-wrap: wrap; gap: 4px;
+  display: flex; justify-content: space-between; flex-wrap: wrap; gap: 4px; flex-shrink: 0;
 }
 
 .modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 16px; }
@@ -102,14 +97,13 @@ button.icon { background: transparent; padding: 6px 10px; }
 .toast.show { opacity: 1; }
 input[type="file"] { display: none !important; }
 
-/* تنسيقات خاصة بالموبايل */
 @media (max-width: 768px) {
   header { padding: 6px; }
   header h1 { font-size: 15px; }
-  .container { flex-direction: column; } /* المحرر فوق والمعاينة تحت */
+  .container { flex-direction: column; }
   .resizer { width: 100%; height: 8px; cursor: row-resize; }
   #editor, #preview { min-height: 200px; }
-  .console-panel { height: 110px; } /* تصغير الكونسول */
+  .console-panel { height: 110px; }
   .console-panel.collapsed { height: 28px; }
   button, select { padding: 6px 10px; font-size: 12px; }
 }
@@ -125,7 +119,6 @@ input[type="file"] { display: none !important; }
       <option value="html">HTML</option>
       <option value="javascript">JS</option>
       <option value="css">CSS</option>
-      <option value="python">Python</option>
     </select>
     <select id="splitSelect">
       <option value="split">جنب لجنب</option>
@@ -139,12 +132,10 @@ input[type="file"] { display: none !important; }
     <button onclick="downloadFile()">⬇ تحميل</button>
     <button onclick="triggerUpload()">⬆ رفع</button>
     <button onclick="openSnippets()">📚 أمثلة</button>
-    <button onclick="shareLink()">🔗 مشاركة</button>
-    <button class="icon" onclick="toggleTheme()">🌓</button>
     <button class="small" onclick="changeFontSize(-1)">A−</button>
     <button class="small" onclick="changeFontSize(1)">A+</button>
   </div>
-  <input type="file" id="fileInput" accept=".html,.js,.css,.json,.md,.txt">
+  <input type="file" id="fileInput" accept=".html,.js,.css,.txt">
 </header>
 
 <div class="tabs-bar" id="tabsBar"></div>
@@ -190,7 +181,7 @@ input[type="file"] { display: none !important; }
 var state = { tabs: [], activeTabId: null, models: {}, consoleCount: 0, debounceTimer: null };
 var editor = null;
 var tabCounter = 0;
-var STORAGE_KEY = 'smart_editor_v1';
+var STORAGE_KEY = 'smart_editor_v3';
 
 var DEFAULT_CODE = '<!DOCTYPE html>\n<html lang="ar" dir="rtl">\n<head>\n  <meta charset="UTF-8">\n  <style>\n    body { font-family:system-ui; text-align:center; padding:50px; background:linear-gradient(135deg,#667eea,#764ba2); color:white; }\n    button { padding:12px 24px; font-size:16px; border:none; border-radius:8px; cursor:pointer; background:white; color:#333; }\n  </style>\n</head>\n<body>\n  <h1>مرحبا بالعالم 👋</h1>\n  <p>ابدأ اكتب كودك هنا وشوف النتيجة فوراً!</p>\n  <button onclick="console.log(\'تم الضغط!\')">اضغطني</button>\n  <script>console.log("أهلاً بيك في المحرر الذكي!");<\/script>\n</body>\n</html>';
 
@@ -199,11 +190,12 @@ var SNIPPETS = [
   {name:'Fetch API', desc:'جلب بيانات', lang:'javascript', code:'fetch("https://jsonplaceholder.typicode.com/posts/1")\n  .then(function(r){ return r.json(); })\n  .then(function(d){ console.log(d); });'}
 ];
 
-function showToast(msg){
+window.showToast = function(msg){
   var t = document.getElementById('toast');
+  if(!t) return;
   t.textContent = msg; t.classList.add('show');
   clearTimeout(t._t); t._t = setTimeout(function(){ t.classList.remove('show'); }, 1800);
-}
+};
 
 function debounce(fn, wait){
   return function(){ var ctx = this, args = arguments; clearTimeout(state.debounceTimer); state.debounceTimer = setTimeout(function(){ fn.apply(ctx, args); }, wait); };
@@ -228,10 +220,10 @@ function createTab(name, language, content){
   return id;
 }
 
-function addNewTab(content, language, name){
+window.addNewTab = function(content, language, name){
   var id = createTab(name, language, content || '<!-- كود جديد -->');
   switchTab(id); renderTabs();
-}
+};
 
 function switchTab(id){
   if(!state.models[id]) return;
@@ -262,10 +254,8 @@ function renderTabs(){
   var bar = document.getElementById('tabsBar'); bar.innerHTML = '';
   var addBtn = document.createElement('div'); addBtn.className = 'tab-add'; addBtn.textContent = '+';
   addBtn.onclick = function(){ addNewTab(); }; bar.appendChild(addBtn);
-
   state.tabs.forEach(function(t){
-    var d = document.createElement('div');
-    d.className = 'tab' + (t.id === state.activeTabId ? ' active' : '');
+    var d = document.createElement('div'); d.className = 'tab' + (t.id === state.activeTabId ? ' active' : '');
     d.onclick = function(){ switchTab(t.id); };
     var nameSpan = document.createElement('span'); nameSpan.textContent = t.name; d.appendChild(nameSpan);
     var closeSpan = document.createElement('span'); closeSpan.className = 'close'; closeSpan.textContent = '✕';
@@ -275,51 +265,51 @@ function renderTabs(){
 }
 
 function initEditor(){
-  // كشف إذا كان المستخدم على موبايل
   var isMobile = window.innerWidth <= 768;
-  var defaultSplit = isMobile ? 'split-horizontal' : 'split';
-  
   if(isMobile) {
     document.getElementById('splitSelect').value = 'split-horizontal';
     document.getElementById('mainContainer').classList.add('split-horizontal');
   }
 
-  editor = monaco.editor.create(document.getElementById('editor'), {
-    theme: 'vs-dark',
-    fontSize: isMobile ? 13 : 14,
-    automaticLayout: true,
-    minimap: { enabled: !isMobile }, // إخفاء الخريطة على الموبايل
-    wordWrap: 'on',
-    scrollBeyondLastLine: false,
-    fontFamily: 'Consolas, Monaco, monospace'
-  });
-
-  editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, runCode);
-  editor.onDidChangeCursorPosition(function(e){
-    document.getElementById('statusInfo').textContent = 'سطر ' + e.position.lineNumber + '، عمود ' + e.position.column;
-  });
-
-  // تحميل الملفات المحفوظة
-  var saved = null;
-  try { saved = JSON.parse(localStorage.getItem(STORAGE_KEY)); } catch(e){}
+  require.config({ paths: { vs: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs' } });
   
-  if(saved && saved.tabs && saved.tabs.length > 0){
-    saved.tabs.forEach(function(t){
-      var m = monaco.editor.createModel(t.content, t.language);
-      state.models[t.id] = m; state.tabs.push({ id: t.id, name: t.name, language: t.language });
-      var num = parseInt(t.id.replace('tab_', ''), 10) || 0; if(num > tabCounter) tabCounter = num;
-      m.onDidChangeContent(debounce(function(){ saveToStorage(); updateStatus(); runCode(); }, 500));
+  require(['vs/editor/editor.main'], function() {
+    editor = monaco.editor.create(document.getElementById('editor'), {
+      theme: 'vs-dark',
+      fontSize: isMobile ? 13 : 14,
+      automaticLayout: true,
+      minimap: { enabled: !isMobile },
+      wordWrap: 'on',
+      scrollBeyondLastLine: false,
+      fontFamily: 'Consolas, Monaco, monospace'
     });
-    switchTab(saved.activeTabId && state.models[saved.activeTabId] ? saved.activeTabId : state.tabs[0].id);
-  } else {
-    addNewTab(DEFAULT_CODE, 'html', 'index.html');
-  }
-  renderTabs(); updateStatus(); runCode();
+
+    editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, runCode);
+    editor.onDidChangeCursorPosition(function(e){
+      document.getElementById('statusInfo').textContent = 'سطر ' + e.position.lineNumber + '، عمود ' + e.position.column;
+    });
+
+    var saved = null;
+    try { saved = JSON.parse(localStorage.getItem(STORAGE_KEY)); } catch(e){}
+    
+    if(saved && saved.tabs && saved.tabs.length > 0){
+      saved.tabs.forEach(function(t){
+        var m = monaco.editor.createModel(t.content, t.language);
+        state.models[t.id] = m; state.tabs.push({ id: t.id, name: t.name, language: t.language });
+        var num = parseInt(t.id.replace('tab_', ''), 10) || 0; if(num > tabCounter) tabCounter = num;
+        m.onDidChangeContent(debounce(function(){ saveToStorage(); updateStatus(); runCode(); }, 500));
+      });
+      switchTab(saved.activeTabId && state.models[saved.activeTabId] ? saved.activeTabId : state.tabs[0].id);
+    } else {
+      addNewTab(DEFAULT_CODE, 'html', 'index.html');
+    }
+    renderTabs(); updateStatus(); runCode();
+  });
 }
 
 var CONSOLE_INJECT = '<script>(function(){var s=function(l,a){try{parent.postMessage({type:"console",level:l,args:a.map(function(x){try{return typeof x==="object"&&x!==null?JSON.stringify(x):String(x);}catch(e){return String(x);}})}, "*");}catch(e){}};["log","error","warn","info"].forEach(function(m){var o=console[m];console[m]=function(){var a=[].slice.call(arguments);s(m,a);if(o)o.apply(console,a);};});window.onerror=function(msg,url,line){s("error",[msg+(line?" (سطر "+line+")":"")]);};})();<\/script>';
 
-function runCode(){
+window.runCode = function(){
   if(!state.activeTabId) return;
   var code = getModelValue();
   var lang = document.getElementById('langSelect').value;
@@ -339,7 +329,7 @@ function runCode(){
   }
   preview.srcdoc = srcdoc;
   updateStatus();
-}
+};
 
 window.addEventListener('message', function(e){
   if(e.data && e.data.type === 'console'){
@@ -352,7 +342,7 @@ window.addEventListener('message', function(e){
   }
 });
 
-function toggleConsole(){ document.getElementById('consolePanel').classList.toggle('collapsed'); }
+window.toggleConsole = function(){ document.getElementById('consolePanel').classList.toggle('collapsed'); };
 
 function copyTextToClipboard(text, onSuccess, onError){
   if(navigator.clipboard && navigator.clipboard.writeText){
@@ -370,45 +360,40 @@ function legacyCopy(text, onSuccess, onError){
   } catch(e){ if(onError) onError(); }
 }
 
-function copyCode(){
+window.copyCode = function(){
   if(!getActiveModel()) return;
   copyTextToClipboard(getModelValue(), function(){ showToast('✅ تم النسخ'); }, function(){ prompt('انسخ يدوياً:', getModelValue()); });
-}
+};
 
-function downloadFile(){
+window.downloadFile = function(){
   if(!getActiveModel()) return;
   var lang = document.getElementById('langSelect').value;
-  var extMap = { html:'html', javascript:'js', css:'css', json:'json' };
+  var extMap = { html:'html', javascript:'js', css:'css' };
   var ext = extMap[lang] || 'txt';
   var blob = new Blob([getModelValue()], { type: 'text/plain;charset=utf-8' });
   var a = document.createElement('a'); a.href = URL.createObjectURL(blob);
   a.download = 'code.' + ext; document.body.appendChild(a); a.click();
   setTimeout(function(){ URL.revokeObjectURL(a.href); document.body.removeChild(a); }, 100);
   showToast('⬇ تم التحميل');
-}
+};
 
-function triggerUpload(){ document.getElementById('fileInput').click(); }
+window.triggerUpload = function(){ document.getElementById('fileInput').click(); };
 
 document.getElementById('fileInput').addEventListener('change', function(e){
   var f = e.target.files[0]; if(!f) return;
   var reader = new FileReader();
   reader.onload = function(ev){
     var ext = f.name.split('.').pop().toLowerCase();
-    var map = { html:'html', js:'javascript', css:'css', json:'json' };
+    var map = { html:'html', js:'javascript', css:'css' };
     addNewTab(ev.target.result, map[ext] || 'plaintext', f.name);
     showToast('⬆ تم الرفع');
   };
   reader.readAsText(f); e.target.value = '';
 });
 
-function formatCode(){
+window.formatCode = function(){
   if(!getActiveModel()) return;
   var code = getModelValue(); var lang = document.getElementById('langSelect').value;
-  if(lang === 'json'){
-    try { editor.setValue(JSON.stringify(JSON.parse(code), null, 2)); showToast('✨ تم التنسيق'); }
-    catch(e) { showToast('❌ JSON غير صالح'); }
-    return;
-  }
   if(typeof prettier === 'undefined') return showToast('⚠ Prettier لم يُحمل');
   var promise = null;
   if(lang === 'html') promise = prettier.format(code, { parser: 'html', plugins: [prettierPlugins.html] });
@@ -417,20 +402,14 @@ function formatCode(){
   else return showToast('⚠ التنسيق غير مدعوم');
 
   if(promise) promise.then(function(f){ editor.setValue(f); showToast('✨ تم التنسيق'); }).catch(function(e){ showToast('❌ خطأ في التنسيق'); });
-}
+};
 
-function changeFontSize(d){
+window.changeFontSize = function(d){
   if(!editor) return;
   var cur = editor.getOption(monaco.editor.EditorOption.fontSize);
   editor.updateOptions({ fontSize: Math.max(10, Math.min(30, cur + d)) });
   showToast('حجم الخط تغير');
-}
-
-function toggleTheme(){
-  var isLight = document.body.classList.contains('light');
-  document.body.classList.toggle('light');
-  monaco.editor.setTheme(isLight ? 'vs-dark' : 'vs');
-}
+};
 
 document.getElementById('langSelect').addEventListener('change', function(e){
   var m = getActiveModel(); if(!m) return;
@@ -448,7 +427,7 @@ document.getElementById('splitSelect').addEventListener('change', function(e){
   if(editor) setTimeout(function(){ editor.layout(); }, 100);
 });
 
-function openSnippets(){
+window.openSnippets = function(){
   var list = document.getElementById('snippetsList'); list.innerHTML = '';
   SNIPPETS.forEach(function(s){
     var d = document.createElement('div'); d.className = 'snippet-item';
@@ -457,17 +436,9 @@ function openSnippets(){
     list.appendChild(d);
   });
   document.getElementById('snippetsModal').classList.add('open');
-}
-function closeSnippets(){ document.getElementById('snippetsModal').classList.remove('open'); }
+};
 
-function shareLink(){
-  if(!getActiveModel()) return;
-  try {
-    var data = { c: getModelValue(), l: document.getElementById('langSelect').value };
-    var url = location.origin + location.pathname + '#code=' + btoa(unescape(encodeURIComponent(JSON.stringify(data))));
-    copyTextToClipboard(url, function(){ showToast('🔗 تم نسخ الرابط'); }, function(){ prompt('انسخ:', url); });
-  } catch(e) { showToast('❌ فشل'); }
-}
+window.closeSnippets = function(){ document.getElementById('snippetsModal').classList.remove('open'); };
 
 function updateStatus(){
   var m = getActiveModel(); if(!m) return;
@@ -475,8 +446,7 @@ function updateStatus(){
   document.getElementById('statusStats').textContent = m.getLineCount() + ' سطر | ' + t.length + ' حرف';
 }
 
-require.config({ paths: { vs: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs' } });
-require(['vs/editor/editor.main'], initEditor);
+initEditor();
 window.addEventListener('beforeunload', saveToStorage);
 })();
 </script>
