@@ -2,62 +2,128 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>محرري الذكي</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<title>محرري الذكي - النسخة الاحترافية</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/dracula.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/show-hint.min.css">
 <style>
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body { font-family: sans-serif; background: #1e1e1e; color: #fff; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
-header { background: #252526; padding: 8px; border-bottom: 1px solid #333; display: flex; flex-direction: column; gap: 8px; }
-.header-top { display: flex; justify-content: space-between; padding: 0 8px; }
-header h1 { font-size: 16px; color: #4ec9b0; }
-.toolbar { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; }
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif; }
+body { background: #282a36; color: #f8f8f2; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+header { background: #21222c; padding: 10px; border-bottom: 1px solid #44475a; display: flex; flex-direction: column; gap: 10px; flex-shrink: 0; z-index: 10; }
+.header-top { display: flex; justify-content: space-between; align-items: center; }
+header h1 { font-size: 18px; color: #8be9fd; font-weight: bold; }
+.toolbar { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; align-items: center; }
 .toolbar::-webkit-scrollbar { display: none; }
-button, select { background: #0e639c; color: #fff; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 13px; white-space: nowrap; }
-select { background: #3c3c3c; }
-button:hover { background: #1177bb; }
-.container { display: flex; flex: 1; overflow: hidden; flex-direction: column; }
-#editorWrapper { flex: 1; overflow: hidden; position: relative; min-height: 200px;}
-.CodeMirror { height: 100% !important; font-size: 14px; direction: ltr; text-align: left; }
-#preview { flex: 1; background: #fff; border: none; min-height: 200px; }
-.console-panel { height: 120px; background: #252526; border-top: 1px solid #333; display: flex; flex-direction: column; flex-shrink: 0; }
-.console-header { padding: 6px; font-size: 12px; background: #2d2d2d; cursor: pointer; display: flex; justify-content: space-between; }
-.console-body { flex: 1; overflow-y: auto; font-family: monospace; font-size: 12px; padding: 4px; }
-.console-line { border-bottom: 1px solid #333; padding: 2px 0; color: #4ec9b0; }
-.console-line.error { color: #f48771; }
+select, button { background: #44475a; color: #f8f8f2; border: none; padding: 8px 14px; border-radius: 6px; cursor: pointer; font-size: 14px; white-space: nowrap; transition: 0.2s; font-weight: bold; }
+button:hover { background: #6272a4; }
+button.primary { background: #50fa7b; color: #282a36; }
+button.primary:hover { background: #40d969; }
+button.ai { background: #bd93f9; color: #282a36; }
+button.ai:hover { background: #a67cf4; }
+
+.tabs-bar { display: flex; background: #21222c; border-bottom: 1px solid #44475a; overflow-x: auto; flex-shrink: 0; }
+.tabs-bar::-webkit-scrollbar { height: 4px; }
+.tab { display: flex; align-items: center; gap: 8px; padding: 10px 16px; border-left: 1px solid #44475a; cursor: pointer; font-size: 14px; transition: 0.2s; }
+.tab:hover { background: #2d303e; }
+.tab.active { background: #282a36; border-bottom: 3px solid #50fa7b; }
+.tab .close { opacity: 0.5; padding: 0 4px; font-size: 16px; }
+.tab .close:hover { opacity: 1; color: #ff5555; }
+.tab-add { padding: 10px 20px; cursor: pointer; font-size: 22px; color: #50fa7b; font-weight: bold; }
+
+.container { display: flex; flex: 1; overflow: hidden; flex-direction: row; }
+#editorWrapper { flex: 1; overflow: hidden; position: relative; min-width: 150px; }
+.CodeMirror { height: 100% !important; font-size: 15px; direction: ltr; text-align: left; font-family: 'Fira Code', Consolas, Monaco, monospace; }
+#resizer { width: 8px; background: #21222c; cursor: col-resize; z-index: 10; flex-shrink: 0; border-left: 1px solid #44475a; border-right: 1px solid #44475a;}
+#preview { flex: 1; background: #fff; border: none; min-width: 150px; }
+
+.console-panel { height: 150px; background: #21222c; border-top: 1px solid #44475a; display: flex; flex-direction: column; flex-shrink: 0; transition: height 0.3s ease; }
+.console-panel.collapsed { height: 35px; }
+.console-header { padding: 8px 16px; font-size: 13px; background: #282a36; cursor: pointer; display: flex; justify-content: space-between; border-bottom: 1px solid #44475a; font-weight: bold; }
+.console-body { flex: 1; overflow-y: auto; font-family: monospace; font-size: 14px; padding: 8px 16px; }
+.console-line { border-bottom: 1px solid #44475a; padding: 6px 0; color: #f8f8f2; word-wrap: break-word; }
+.console-line.log { color: #50fa7b; }
+.console-line.error { color: #ff5555; background: rgba(255,85,85,0.1); }
+.console-line.warn { color: #f1fa8c; }
+
+.status-bar { background: #6272a4; color: #f8f8f2; padding: 6px 16px; font-size: 13px; display: flex; justify-content: space-between; flex-shrink: 0; font-family: monospace; }
+
+.modal { position: fixed; top:0; left:0; right:0; bottom:0; background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 20px; }
+.modal.open { display: flex; }
+.modal-content { background: #282a36; padding: 24px; border-radius: 12px; max-width: 600px; width: 100%; max-height: 80vh; overflow-y: auto; border: 1px solid #44475a; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+.modal-content h2 { color: #8be9fd; margin-bottom: 20px; }
+.snippet-item { background: #44475a; padding: 14px; margin-bottom: 10px; border-radius: 6px; cursor: pointer; transition: 0.2s; border: 1px solid transparent; }
+.snippet-item:hover { background: #6272a4; border-color: #bd93f9; }
+.snippet-item h3 { font-size: 16px; margin-bottom: 6px; color: #50fa7b; }
+.snippet-item p { font-size: 13px; color: #f8f8f2; opacity: 0.9; }
+
+.toast { position: fixed; bottom: 50px; left: 50%; transform: translateX(-50%); background: #50fa7b; color: #282a36; padding: 12px 24px; border-radius: 8px; font-weight: bold; opacity: 0; transition: opacity 0.3s; z-index: 2000; pointer-events: none; }
+.toast.show { opacity: 1; }
+
+@media (max-width: 768px) {
+  header { padding: 8px; }
+  .container { flex-direction: column; }
+  #resizer { width: 100%; height: 10px; cursor: row-resize; border: none; border-top: 1px solid #44475a; border-bottom: 1px solid #44475a;}
+  #editorWrapper, #preview { min-height: 250px; }
+  .console-panel { height: 120px; }
+  button, select { padding: 8px 10px; font-size: 13px; }
+}
 </style>
 </head>
 <body>
 <header>
   <div class="header-top">
-    <h1>🧠 محرري الذكي</h1>
-  </div>
-  <div class="toolbar">
+    <h1>🧠 محرري الذكي الاحترافي</h1>
     <select id="langSelect" onchange="changeLang()">
       <option value="htmlmixed">HTML</option>
       <option value="javascript">JS</option>
       <option value="css">CSS</option>
     </select>
-    <button onclick="runCode()">▶ شغّل</button>
+  </div>
+  <div class="toolbar">
+    <button class="primary" onclick="runCode()">▶ شغّل</button>
+    <button onclick="formatCode()">✨ تنسيق</button>
     <button onclick="copyCode()">📋 نسخ</button>
     <button onclick="downloadFile()">⬇ تحميل</button>
-    <button onclick="loadDefault()">📄 كود جديد</button>
+    <button onclick="triggerUpload()">⬆ رفع</button>
+    <button onclick="openSnippets()">📚 أمثلة</button>
+    <button class="ai" onclick="askAI()">🤖 اسأل AI</button>
   </div>
+  <input type="file" id="fileInput" style="display:none" accept=".html,.js,.css,.txt">
 </header>
 
-<div class="container">
+<div class="tabs-bar" id="tabsBar"></div>
+
+<div class="container" id="mainContainer">
   <div id="editorWrapper"><textarea id="codeArea"></textarea></div>
+  <div id="resizer"></div>
   <iframe id="preview"></iframe>
 </div>
 
-<div class="console-panel">
+<div class="console-panel" id="consolePanel">
   <div class="console-header" onclick="toggleConsole()">
-    <span>🖥 Console</span>
-    <span>▼</span>
+    <span>🖥 Console <span id="consoleCount">(0)</span></span>
+    <span>▼ إخفاء/إظهار</span>
   </div>
   <div class="console-body" id="consoleBody"></div>
 </div>
+
+<div class="status-bar">
+  <span id="statusInfo">سطر 1، عمود 1</span>
+  <span id="statusStats">0 حرف</span>
+</div>
+
+<div class="modal" id="snippetsModal" onclick="if(event.target===this)closeSnippets()">
+  <div class="modal-content">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+      <h2 style="margin:0;">📚 أمثلة جاهزة</h2>
+      <span style="cursor:pointer;font-size:24px; color:#ff5555;" onclick="closeSnippets()">✕</span>
+    </div>
+    <div id="snippetsList"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast">✅ تم بنجاح</div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/xml/xml.min.js"></script>
@@ -66,29 +132,160 @@ button:hover { background: #1177bb; }
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/htmlmixed/htmlmixed.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closebrackets.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/matchbrackets.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/show-hint.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/xml-hint.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/html-hint.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/css-hint.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/javascript-hint.min.js"></script>
 
 <script>
-var DEFAULT_CODE = '<!DOCTYPE html>\n<html lang="ar" dir="rtl">\n<head>\n  <meta charset="UTF-8">\n  <style>\n    body { font-family:sans-serif; text-align:center; padding:50px; background:#f0f0f0; }\n    h1 { color: #4CAF50; }\n  </style>\n</head>\n<body>\n  <h1>مرحبا بالعالم 👋</h1>\n  <p>جرب تكتب كودك هنا!</p>\n  <button onclick="console.log(\'تم الضغط!\')">اضغطني</button>\n  <script>console.log("أهلاً بيك في المحرر!");<\/script>\n</body>\n</html>';
+var state = { tabs: [], activeTabId: null, consoleCount: 0 };
+var tabCounter = 0;
+var editor = null;
+var STORAGE_KEY = 'smart_editor_pro_v2';
 
-var editor = CodeMirror.fromTextArea(document.getElementById("codeArea"), {
-  lineNumbers: true,
-  mode: "htmlmixed",
-  theme: "dracula",
-  autoCloseBrackets: true,
-  matchBrackets: true,
-  lineWrapping: true,
-  indentUnit: 4
-});
+var DEFAULT_CODE = '<!DOCTYPE html>\n<html lang="ar" dir="rtl">\n<head>\n  <meta charset="UTF-8">\n  <style>\n    body { font-family:sans-serif; text-align:center; padding:50px; background:#f0f0f0; }\n    h1 { color: #4CAF50; }\n    button { padding: 10px 20px; font-size: 16px; cursor: pointer; }\n  </style>\n</head>\n<body>\n  <h1>مرحبا بالعالم 👋</h1>\n  <p>اكتب &lt; وشوف الاقتراحات!</p>\n  <button onclick="console.log(\'تم الضغط!\')">اضغطني</button>\n  <script>console.log("أهلاً بيك!");<\/script>\n</body>\n</html>';
 
-editor.setValue(DEFAULT_CODE);
+var SNIPPETS = [
+  {name:'زر تفاعلي', desc:'زر مع تأثير Hover', lang:'htmlmixed', code:'<button class="btn">اضغطني</button>\n<style>\n.btn { padding:12px 24px; background:#4CAF50; color:white; border:none; border-radius:8px; cursor:pointer; }\n.btn:hover { background:#45a049; transform:scale(1.05); }\n</style>'},
+  {name:'جلب بيانات API', desc:'كود JS لجلب بيانات', lang:'javascript', code:'fetch("https://jsonplaceholder.typicode.com/posts/1")\n  .then(res => res.json())\n  .then(data => console.log(data))\n  .catch(err => console.error(err));'},
+  {name:'شبكة Flexbox', desc:'تقسيم الشاشة لصناديق', lang:'htmlmixed', code:'<div class="container">\n  <div class="box">1</div>\n  <div class="box">2</div>\n  <div class="box">3</div>\n</div>\n<style>\n.container { display: flex; gap: 10px; padding: 20px; }\n.box { flex: 1; background: #bd93f9; color: white; padding: 20px; text-align: center; border-radius: 8px; }\n</style>'}
+];
 
-var CONSOLE_INJECT = '<script>(function(){var s=function(l,a){try{parent.postMessage({type:"console",level:l,args:a.map(function(x){try{return typeof x==="object"?JSON.stringify(x):String(x);}catch(e){return String(x);}})}, "*");}catch(e){}};["log","error","warn","info"].forEach(function(m){var o=console[m];console[m]=function(){var a=[].slice.call(arguments);s(m,a);if(o)o.apply(console,a);};});window.onerror=function(msg,url,line){s("error",[msg+(line?" (سطر "+line+")":"")]);};})();<\/script>';
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(function(){ t.classList.remove('show'); }, 2500);
+}
+
+function initEditor() {
+  editor = CodeMirror.fromTextArea(document.getElementById("codeArea"), {
+    lineNumbers: true, mode: "htmlmixed", theme: "dracula",
+    autoCloseBrackets: true, matchBrackets: true, lineWrapping: true, indentUnit: 4,
+    extraKeys: {
+      "Ctrl-Space": "autocomplete",
+      "Ctrl-Enter": function() { runCode(); }
+    }
+  });
+
+  // تفعيل الإكمال التلقائي (الاقتراحات)
+  editor.on("inputRead", function(cm, change) {
+    if (change.text[0] === '<' || change.text[0] === '.' || change.text[0] === ' ' || /[a-zA-Z]/.test(change.text[0])) {
+      if(!cm.state.completionActive) {
+        cm.showHint({ completeSingle: false });
+      }
+    }
+  });
+
+  editor.on("change", function() {
+    saveToStorage();
+    updateStatus();
+    clearTimeout(window.debounceTimer);
+    window.debounceTimer = setTimeout(runCode, 1000); // تأخير عشان الكيبورد ميهنجش
+  });
+
+  editor.on("cursorActivity", function() {
+    var pos = editor.getCursor();
+    document.getElementById('statusInfo').textContent = 'سطر ' + (pos.line + 1) + '، عمود ' + (pos.ch + 1);
+  });
+
+  var saved = null;
+  try { saved = JSON.parse(localStorage.getItem(STORAGE_KEY)); } catch(e){}
+  
+  if(saved && saved.tabs && saved.tabs.length > 0) {
+    state = saved;
+    tabCounter = state.tabs.length;
+    renderTabs();
+    switchTab(state.activeTabId);
+  } else {
+    addNewTab(DEFAULT_CODE, 'htmlmixed', 'index.html');
+  }
+  setupResizer();
+}
+
+function saveToStorage() {
+  if(!state.activeTabId) return;
+  for(var i=0; i<state.tabs.length; i++) {
+    if(state.tabs[i].id === state.activeTabId) {
+      state.tabs[i].content = editor.getValue();
+      state.tabs[i].lang = document.getElementById('langSelect').value;
+      break;
+    }
+  }
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e){}
+}
+
+function addNewTab(content, lang, name) {
+  var id = 'tab_' + (++tabCounter);
+  state.tabs.push({ id: id, name: name || ('ملف ' + tabCounter), lang: lang || 'htmlmixed', content: content || '<!-- كود جديد -->' });
+  switchTab(id);
+}
+
+function switchTab(id) {
+  saveToStorage();
+  state.activeTabId = id;
+  for(var i=0; i<state.tabs.length; i++) {
+    if(state.tabs[i].id === id) {
+      editor.setValue(state.tabs[i].content);
+      document.getElementById('langSelect').value = state.tabs[i].lang;
+      editor.setOption("mode", state.tabs[i].lang);
+      break;
+    }
+  }
+  renderTabs();
+  updateStatus();
+  runCode();
+}
+
+function closeTab(id, ev) {
+  if(ev) ev.stopPropagation();
+  var idx = -1;
+  for(var i=0; i<state.tabs.length; i++) { if(state.tabs[i].id === id) { idx = i; break; } }
+  if(idx === -1) return;
+  state.tabs.splice(idx, 1);
+  if(state.activeTabId === id) {
+    if(state.tabs.length > 0) switchTab(state.tabs[Math.max(0, idx-1)].id);
+    else { state.tabs = []; addNewTab(DEFAULT_CODE, 'htmlmixed', 'index.html'); }
+  } else {
+    renderTabs();
+    saveToStorage();
+  }
+}
+
+function renderTabs() {
+  var bar = document.getElementById('tabsBar'); bar.innerHTML = '';
+  var addBtn = document.createElement('div'); addBtn.className = 'tab-add'; addBtn.textContent = '+';
+  addBtn.onclick = function() { addNewTab(); }; bar.appendChild(addBtn);
+  
+  state.tabs.forEach(function(t) {
+    var d = document.createElement('div'); d.className = 'tab' + (t.id === state.activeTabId ? ' active' : '');
+    d.onclick = function() { switchTab(t.id); };
+    var nameSpan = document.createElement('span'); nameSpan.textContent = t.name; d.appendChild(nameSpan);
+    var closeSpan = document.createElement('span'); closeSpan.className = 'close'; closeSpan.textContent = '✕';
+    closeSpan.onclick = function(e) { closeTab(t.id, e); }; d.appendChild(closeSpan);
+    bar.appendChild(d);
+  });
+}
+
+function updateStatus() {
+  var t = editor.getValue();
+  document.getElementById('statusStats').textContent = t.length + ' حرف';
+}
+
+function changeLang() {
+  var lang = document.getElementById('langSelect').value;
+  editor.setOption("mode", lang);
+  saveToStorage();
+}
+
+var CONSOLE_INJECT = '<script>(function(){var s=function(l,a){try{parent.postMessage({type:"console",level:l,args:a.map(function(x){try{return typeof x==="object"&&x!==null?JSON.stringify(x):String(x);}catch(e){return String(x);}})}, "*");}catch(e){}};["log","error","warn","info"].forEach(function(m){var o=console[m];console[m]=function(){var a=[].slice.call(arguments);s(m,a);if(o)o.apply(console,a);};});window.onerror=function(msg,url,line){s("error",[msg+(line?" (سطر "+line+")":"")]);};})();<\/script>';
 
 function runCode() {
   var code = editor.getValue();
   var lang = document.getElementById('langSelect').value;
   var preview = document.getElementById('preview');
-  document.getElementById('consoleBody').innerHTML = '';
+  document.getElementById('consoleBody').innerHTML = ''; state.consoleCount = 0;
+  document.getElementById('consoleCount').textContent = '(0)';
   
   var srcdoc = '';
   if(lang === 'htmlmixed') {
@@ -96,9 +293,9 @@ function runCode() {
     else if(/<body[^>]*>/i.test(code)) srcdoc = code.replace(/<body[^>]*>/i, function(m){ return m + CONSOLE_INJECT; });
     else srcdoc = CONSOLE_INJECT + code;
   } else if(lang === 'javascript') {
-    srcdoc = CONSOLE_INJECT + '<body style="font-family:monospace;padding:20px;background:#1e1e1e;color:#fff"><script>' + code + '<\/script></body>';
+    srcdoc = CONSOLE_INJECT + '<body style="font-family:monospace;padding:20px;background:#282a36;color:#f8f8f2"><script>' + code + '<\/script></body>';
   } else {
-    srcdoc = '<pre style="padding:20px;font-family:monospace">هذه اللغة غير مدعومة للمعاينة.</pre>';
+    srcdoc = '<pre style="padding:20px;font-family:monospace">هذه اللغة للمعاينة فقط.</pre>';
   }
   preview.srcdoc = srcdoc;
 }
@@ -110,44 +307,119 @@ window.addEventListener('message', function(e) {
     l.className = 'console-line ' + (e.data.level || 'log');
     l.textContent = '› ' + (e.data.args || []).join(' ');
     b.appendChild(l); b.scrollTop = b.scrollHeight;
+    state.consoleCount++; document.getElementById('consoleCount').textContent = '(' + state.consoleCount + ')';
   }
 });
 
-function changeLang() {
-  var lang = document.getElementById('langSelect').value;
-  editor.setOption("mode", lang);
-}
+function toggleConsole() { document.getElementById('consolePanel').classList.toggle('collapsed'); }
 
 function copyCode() {
-  navigator.clipboard.writeText(editor.getValue()).then(function(){ alert('تم النسخ!'); });
+  navigator.clipboard.writeText(editor.getValue()).then(function(){
+    showToast('✅ تم نسخ الكود بنجاح!');
+  }).catch(function(){
+    alert('❌ المتصفح منع النسخ التلقائي، انسخ يدوياً.');
+  });
 }
 
 function downloadFile() {
+  var lang = document.getElementById('langSelect').value;
+  var ext = lang === 'htmlmixed' ? 'html' : (lang === 'javascript' ? 'js' : 'css');
   var blob = new Blob([editor.getValue()], {type: 'text/plain;charset=utf-8'});
   var a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = 'code.html';
+  a.download = 'code.' + ext;
   a.click();
+  showToast('⬇ تم تحميل الملف');
 }
 
-function loadDefault() {
-  editor.setValue(DEFAULT_CODE);
-  document.getElementById('langSelect').value = 'htmlmixed';
-  changeLang();
-  runCode();
-}
+function triggerUpload() { document.getElementById('fileInput').click(); }
 
-function toggleConsole() {
-  var p = document.querySelector('.console-panel');
-  p.style.height = p.style.height === '32px' ? '120px' : '32px';
-}
-
-editor.on("change", function() {
-  clearTimeout(window.debounceTimer);
-  window.debounceTimer = setTimeout(runCode, 500);
+document.getElementById('fileInput').addEventListener('change', function(e) {
+  var f = e.target.files[0]; if(!f) return;
+  var reader = new FileReader();
+  reader.onload = function(ev) {
+    var ext = f.name.split('.').pop().toLowerCase();
+    var mode = ext === 'js' ? 'javascript' : (ext === 'css' ? 'css' : 'htmlmixed');
+    addNewTab(ev.target.result, mode, f.name);
+    showToast('⬆ تم رفع الملف');
+  };
+  reader.readAsText(f); e.target.value = '';
 });
 
-runCode();
+function formatCode() {
+  var code = editor.getValue();
+  var lang = document.getElementById('langSelect').value;
+  if(lang === 'javascript') {
+    try { 
+      editor.setValue(js_beautify(code)); 
+      showToast('✨ تم تنسيق الكود');
+    } catch(e){ showToast('❌ فشل التنسيق'); }
+  } else {
+    alert('التنسيق التلقائي متاح حالياً للـ JS فقط.');
+  }
+}
+
+function openSnippets() {
+  var list = document.getElementById('snippetsList'); list.innerHTML = '';
+  SNIPPETS.forEach(function(s) {
+    var d = document.createElement('div'); d.className = 'snippet-item';
+    d.innerHTML = '<h3>' + s.name + '</h3><p>' + s.desc + '</p>';
+    d.onclick = function() { addNewTab(s.code, s.lang, s.name); closeSnippets(); showToast('✅ تم إضافة المثال'); };
+    list.appendChild(d);
+  });
+  document.getElementById('snippetsModal').classList.add('open');
+}
+
+function closeSnippets() { document.getElementById('snippetsModal').classList.remove('open'); }
+
+function askAI() {
+  alert('🤖 ميزة الذكاء الاصطناعي هتتفعل قريباً جداً!');
+}
+
+function setupResizer() {
+  var resizer = document.getElementById('resizer');
+  var editorWrap = document.getElementById('editorWrapper');
+  var container = document.getElementById('mainContainer');
+  var isDragging = false;
+
+  resizer.addEventListener('mousedown', function(e) {
+    isDragging = true;
+    document.body.style.cursor = 'col-resize';
+  });
+  resizer.addEventListener('touchstart', function(e) {
+    isDragging = true;
+  }, {passive: true});
+
+  window.addEventListener('mousemove', function(e) {
+    if (!isDragging) return;
+    var containerRect = container.getBoundingClientRect();
+    var newWidth = e.clientX - containerRect.left;
+    if(newWidth > 100 && newWidth < containerRect.width - 100) {
+      editorWrap.style.flex = '0 0 ' + newWidth + 'px';
+      editor.refresh();
+    }
+  });
+  window.addEventListener('touchmove', function(e) {
+    if (!isDragging) return;
+    var containerRect = container.getBoundingClientRect();
+    var newWidth = e.touches[0].clientX - containerRect.left;
+    if(newWidth > 100 && newWidth < containerRect.width - 100) {
+      editorWrap.style.flex = '0 0 ' + newWidth + 'px';
+      editor.refresh();
+    }
+  }, {passive: true});
+
+  window.addEventListener('mouseup', function() {
+    isDragging = false;
+    document.body.style.cursor = 'default';
+  });
+  window.addEventListener('touchend', function() {
+    isDragging = false;
+  });
+}
+
+initEditor();
+window.addEventListener('beforeunload', saveToStorage);
 </script>
 </body>
 </html>
