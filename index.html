@@ -5,229 +5,156 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
 <meta name="theme-color" content="#1e1e1e">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="format-detection" content="telephone=no">
 <title>محرري الذكي</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs/editor/editor.main.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
-* { margin: 0; padding: 0; box-sizing: border-box; -webkit-box-sizing: border-box; -moz-box-sizing: border-box; }
-*:before, *:after { box-sizing: border-box; }
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-box-sizing: border-box; }
 :root { --bg:#1e1e1e; --panel:#252526; --border:#333; --text:#fff; --accent:#0e639c; --accent-hover:#1177bb; --ai:#6a3d9a; }
 body.light { --bg:#f5f5f5; --panel:#fff; --border:#ddd; --text:#333; }
 html, body { height: 100%; }
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, Roboto, Arial, sans-serif;
   background: var(--bg); color: var(--text);
   height: 100vh; height: 100dvh;
   display: flex; flex-direction: column; overflow: hidden;
-  -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
-  -webkit-tap-highlight-color: transparent;
+  -webkit-font-smoothing: antialiased; -webkit-tap-highlight-color: transparent;
 }
 header {
-  background: var(--panel); padding: 8px 16px;
-  display: flex; justify-content: space-between; align-items: center;
-  border-bottom: 1px solid var(--border); gap: 8px; flex-wrap: wrap;
-  min-height: 48px;
+  background: var(--panel); padding: 8px; border-bottom: 1px solid var(--border);
+  display: flex; flex-direction: column; gap: 8px;
 }
+.header-top { display: flex; justify-content: space-between; align-items: center; padding: 0 8px;}
 header h1 { font-size: 16px; color: #4ec9b0; white-space: nowrap; margin: 0; }
-.toolbar { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+
+/* شريط الأدوات بيتسحب بالعرض على الموبايل */
+.toolbar { 
+  display: flex; gap: 6px; align-items: center; overflow-x: auto; padding-bottom: 4px;
+  -webkit-overflow-scrolling: touch; scrollbar-width: none;
+}
+.toolbar::-webkit-scrollbar { display: none; }
+
 select, button {
   background: var(--accent); color: #fff; border: none;
-  padding: 6px 12px; border-radius: 4px; cursor: pointer;
-  font-family: inherit; font-size: 13px;
-  -webkit-appearance: none; -moz-appearance: none; appearance: none;
-  -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none;
-  -webkit-transition: background-color 0.15s ease; transition: background-color 0.15s ease;
-  line-height: 1.4;
+  padding: 8px 12px; border-radius: 4px; cursor: pointer;
+  font-family: inherit; font-size: 13px; white-space: nowrap;
+  -webkit-appearance: none; appearance: none;
+  -webkit-user-select: none; user-select: none; flex-shrink: 0;
 }
 select {
   background: #3c3c3c;
   background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5' viewBox='0 0 8 5'%3E%3Cpath fill='%23fff' d='M0 0l4 5 4-5z'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: left 8px center;
-  padding-left: 24px;
-  -webkit-appearance: none; appearance: none;
+  background-repeat: no-repeat; background-position: left 8px center; padding-left: 24px;
 }
-select::-ms-expand { display: none; }
 button:hover { background: var(--accent-hover); }
-button:active { -webkit-transform: scale(0.97); transform: scale(0.97); }
 button.ai { background: var(--ai); }
-button.small { padding: 4px 8px; font-size: 12px; }
-button.icon { background: transparent; padding: 4px 8px; }
-button.icon:hover { background: rgba(255,255,255,0.1); }
+button.small { padding: 6px 10px; font-size: 12px; }
+button.icon { background: transparent; padding: 6px 10px; }
+
 .tabs-bar {
   display: flex; background: var(--panel); border-bottom: 1px solid var(--border);
-  overflow-x: auto; overflow-y: hidden; align-items: center;
-  -webkit-overflow-scrolling: touch; scrollbar-width: thin;
+  overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch;
 }
-.tabs-bar::-webkit-scrollbar { height: 4px; }
-.tabs-bar::-webkit-scrollbar-thumb { background: #555; border-radius: 2px; }
 .tab {
-  display: flex; align-items: center; gap: 8px;
-  padding: 8px 12px; cursor: pointer;
-  border-left: 1px solid var(--border); font-size: 13px; white-space: nowrap;
-  -webkit-user-select: none; user-select: none;
-  -webkit-transition: background-color 0.1s; transition: background-color 0.1s;
+  display: flex; align-items: center; gap: 8px; padding: 10px 12px; cursor: pointer;
+  border-left: 1px solid var(--border); font-size: 13px; white-space: nowrap; flex-shrink: 0;
 }
-.tab:hover { background: rgba(255,255,255,0.05); }
 .tab.active { background: var(--bg); border-bottom: 2px solid #4ec9b0; }
-.tab .close { opacity: 0.5; font-size: 14px; padding: 0 4px; }
-.tab .close:hover { opacity: 1; color: #f48771; }
-.tab-add { padding: 8px 12px; cursor: pointer; font-size: 18px; opacity: 0.7; -webkit-user-select: none; user-select: none; }
-.tab-add:hover { opacity: 1; }
+.tab .close { opacity: 0.5; padding: 0 8px; font-size: 16px; }
+.tab-add { padding: 8px 16px; cursor: pointer; font-size: 20px; }
+
 .container { display: flex; flex: 1; overflow: hidden; min-height: 0; }
-#editor { flex: 1; height: 100%; min-width: 100px; min-height: 100px; }
-#preview { flex: 1; background: #fff; border: none; min-width: 100px; min-height: 100px; }
-.resizer {
-  width: 5px; background: var(--border); cursor: col-resize;
-  -webkit-user-select: none; user-select: none; touch-action: none;
-}
-.resizer:hover { background: #555; }
-.split-horizontal { -webkit-flex-direction: column; flex-direction: column; }
-.split-horizontal .resizer { width: 100%; height: 5px; cursor: row-resize; }
+#editor { flex: 1; height: 100%; min-width: 100px; min-height: 150px; }
+#preview { flex: 1; background: #fff; border: none; min-width: 100px; min-height: 150px; }
+.resizer { width: 5px; background: var(--border); cursor: col-resize; touch-action: none; }
+
+.split-horizontal { flex-direction: column; }
+.split-horizontal .resizer { width: 100%; height: 10px; cursor: row-resize; }
 .hide-preview #preview, .hide-preview .resizer { display: none; }
 .hide-editor #editor, .hide-editor .resizer { display: none; }
+
 .console-panel {
   height: 150px; background: var(--panel); border-top: 1px solid var(--border);
-  display: flex; flex-direction: column; overflow: hidden;
-  -webkit-transition: height 0.2s ease; transition: height 0.2s ease;
+  display: flex; flex-direction: column; overflow: hidden; transition: height 0.2s ease;
 }
-.console-panel.collapsed { height: 30px; }
-.console-header {
-  padding: 4px 12px; font-size: 12px;
-  display: flex; justify-content: space-between;
-  border-bottom: 1px solid var(--border); cursor: pointer;
-  -webkit-user-select: none; user-select: none;
-}
-.console-body {
-  flex: 1; overflow-y: auto; font-family: Consolas, Monaco, "Courier New", monospace;
-  font-size: 12px; padding: 4px 12px;
-  -webkit-overflow-scrolling: touch;
-}
-.console-body::-webkit-scrollbar { width: 8px; }
-.console-body::-webkit-scrollbar-thumb { background: #555; border-radius: 4px; }
-.console-body::-webkit-scrollbar-track { background: transparent; }
+.console-panel.collapsed { height: 32px; }
+.console-header { padding: 6px 12px; font-size: 12px; display: flex; justify-content: space-between; cursor: pointer; background: #2d2d2d; }
+.console-body { flex: 1; overflow-y: auto; font-family: monospace; font-size: 12px; padding: 4px 12px; }
 .console-line { padding: 2px 0; border-bottom: 1px solid rgba(255,255,255,0.05); word-break: break-all; }
 .console-line.error { color: #f48771; }
 .console-line.warn { color: #dcdcaa; }
 .console-line.log { color: #4ec9b0; }
-.console-line.info { color: #9cdcfe; }
+
 .status-bar {
-  background: var(--accent); color: #fff; padding: 3px 12px; font-size: 12px;
-  display: flex; justify-content: space-between;
-  font-family: Consolas, Monaco, monospace;
-  -webkit-user-select: none; user-select: none;
-  flex-wrap: wrap; gap: 4px;
+  background: var(--accent); color: #fff; padding: 4px 12px; font-size: 12px;
+  display: flex; justify-content: space-between; flex-wrap: wrap; gap: 4px;
 }
-.modal {
-  position: fixed; top: 0; right: 0; bottom: 0; left: 0;
-  background: rgba(0,0,0,0.7); display: none;
-  align-items: center; justify-content: center; z-index: 1000;
-  padding: 16px;
-  -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px);
-}
+
+.modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 16px; }
 .modal.open { display: flex; }
-.modal-content {
-  background: var(--panel); padding: 24px; border-radius: 8px;
-  max-width: 600px; width: 100%; max-height: 80vh; overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  -webkit-box-shadow: 0 10px 40px rgba(0,0,0,0.5); box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-}
-.modal-content h2 { margin-bottom: 16px; color: #4ec9b0; }
-.snippet-item {
-  padding: 10px; margin-bottom: 8px;
-  background: var(--bg); border: 1px solid var(--border); border-radius: 4px;
-  cursor: pointer;
-  -webkit-transition: border-color 0.15s; transition: border-color 0.15s;
-}
-.snippet-item:hover, .snippet-item:active { border-color: #4ec9b0; }
-.snippet-item h3 { font-size: 14px; margin-bottom: 4px; }
+.modal-content { background: var(--panel); padding: 20px; border-radius: 8px; max-width: 600px; width: 100%; max-height: 80vh; overflow-y: auto; }
+.close-modal { float: left; cursor: pointer; font-size: 20px; padding: 4px; }
+.snippet-item { padding: 12px; margin-bottom: 8px; background: var(--bg); border: 1px solid var(--border); border-radius: 4px; cursor: pointer; }
+.snippet-item h3 { font-size: 14px; margin-bottom: 4px; color: #4ec9b0; }
 .snippet-item p { font-size: 12px; opacity: 0.7; }
-.close-modal { float: left; cursor: pointer; font-size: 20px; padding: 4px; -webkit-user-select: none; user-select: none; }
-.toast {
-  position: fixed; bottom: 50px; left: 50%;
-  -webkit-transform: translateX(-50%); transform: translateX(-50%);
-  background: var(--accent); color: #fff; padding: 10px 20px; border-radius: 4px;
-  opacity: 0; -webkit-transition: opacity 0.3s; transition: opacity 0.3s;
-  z-index: 2000; pointer-events: none;
-  -webkit-box-shadow: 0 4px 12px rgba(0,0,0,0.3); box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-  max-width: 90%; text-align: center;
-}
+
+.toast { position: fixed; bottom: 50px; left: 50%; transform: translateX(-50%); background: var(--accent); color: #fff; padding: 10px 20px; border-radius: 4px; opacity: 0; transition: opacity 0.3s; z-index: 2000; pointer-events: none; }
 .toast.show { opacity: 1; }
-@supports (-ms-ime-align: auto) {
-  .toolbar select, .toolbar button { margin: 2px; }
-}
-@media (max-width: 768px) {
-  header { padding: 6px 10px; }
-  header h1 { font-size: 14px; }
-  .toolbar { gap: 4px; }
-  .toolbar button, .toolbar select { padding: 5px 8px; font-size: 12px; }
-  .toolbar button.small { padding: 3px 6px; }
-  .console-panel { height: 100px; }
-  .status-bar { font-size: 11px; padding: 2px 8px; }
-  .modal-content { padding: 16px; }
-}
-@media (max-width: 480px) {
-  header { flex-direction: column; align-items: stretch; }
-  .toolbar { justify-content: center; }
-  .toolbar select { flex: 1; min-width: 100px; }
-}
-@media (hover: none) and (pointer: coarse) {
-  .resizer { width: 10px; }
-  .split-horizontal .resizer { height: 10px; }
-  button, select, .tab { min-height: 36px; }
-}
 input[type="file"] { display: none !important; }
+
+/* تنسيقات خاصة بالموبايل */
+@media (max-width: 768px) {
+  header { padding: 6px; }
+  header h1 { font-size: 15px; }
+  .container { flex-direction: column; } /* المحرر فوق والمعاينة تحت */
+  .resizer { width: 100%; height: 8px; cursor: row-resize; }
+  #editor, #preview { min-height: 200px; }
+  .console-panel { height: 110px; } /* تصغير الكونسول */
+  .console-panel.collapsed { height: 28px; }
+  button, select { padding: 6px 10px; font-size: 12px; }
+}
 </style>
 </head>
 <body>
 <header>
-  <h1>🧠 محرري الذكي</h1>
+  <div class="header-top">
+    <h1>🧠 محرري الذكي</h1>
+  </div>
   <div class="toolbar">
-    <select id="langSelect" aria-label="اللغة">
+    <select id="langSelect">
       <option value="html">HTML</option>
-      <option value="javascript">JavaScript</option>
+      <option value="javascript">JS</option>
       <option value="css">CSS</option>
-      <option value="typescript">TypeScript</option>
-      <option value="json">JSON</option>
-      <option value="markdown">Markdown</option>
       <option value="python">Python</option>
-      <option value="sql">SQL</option>
     </select>
-    <select id="themeSelect" aria-label="الثيم">
-      <option value="vs-dark">داكن</option>
-      <option value="vs">فاتح</option>
-      <option value="hc-black">تباين عالي</option>
-    </select>
-    <select id="splitSelect" aria-label="تقسيم الشاشة">
+    <select id="splitSelect">
       <option value="split">جنب لجنب</option>
-      <option value="split-horizontal">فوق تحت</option>
+      <option value="split-horizontal">فوق وتحت</option>
       <option value="editor-only">المحرر فقط</option>
       <option value="preview-only">المعاينة فقط</option>
     </select>
-    <button type="button" onclick="runCode()">▶ شغّل</button>
-    <button type="button" onclick="formatCode()">✨ تنسيق</button>
-    <button type="button" onclick="copyCode()">📋 نسخ</button>
-    <button type="button" onclick="downloadFile()">⬇ تحميل</button>
-    <button type="button" onclick="triggerUpload()">⬆ رفع</button>
-    <button type="button" onclick="openSnippets()">📚 أمثلة</button>
-    <button type="button" onclick="shareLink()">🔗 مشاركة</button>
-    <button type="button" onclick="exportImage()">🖼 صورة</button>
-    <button type="button" class="small" onclick="changeFontSize(-1)">A−</button>
-    <button type="button" class="small" onclick="changeFontSize(1)">A+</button>
-    <button type="button" class="icon" onclick="toggleTheme()" title="تغيير الثيم">🌓</button>
-    <button type="button" class="ai" onclick="askAI()">🤖 AI</button>
+    <button onclick="runCode()">▶ شغّل</button>
+    <button onclick="formatCode()">✨ تنسيق</button>
+    <button onclick="copyCode()">📋 نسخ</button>
+    <button onclick="downloadFile()">⬇ تحميل</button>
+    <button onclick="triggerUpload()">⬆ رفع</button>
+    <button onclick="openSnippets()">📚 أمثلة</button>
+    <button onclick="shareLink()">🔗 مشاركة</button>
+    <button class="icon" onclick="toggleTheme()">🌓</button>
+    <button class="small" onclick="changeFontSize(-1)">A−</button>
+    <button class="small" onclick="changeFontSize(1)">A+</button>
   </div>
-  <input type="file" id="fileInput" accept=".html,.htm,.js,.css,.json,.md,.ts,.py,.sql,.txt" autocomplete="off">
+  <input type="file" id="fileInput" accept=".html,.js,.css,.json,.md,.txt">
 </header>
+
 <div class="tabs-bar" id="tabsBar"></div>
+
 <div class="container" id="mainContainer">
   <div id="editor"></div>
   <div class="resizer" id="resizer"></div>
-  <iframe id="preview" title="المعاينة"></iframe>
+  <iframe id="preview"></iframe>
 </div>
+
 <div class="console-panel" id="consolePanel">
   <div class="console-header" onclick="toggleConsole()">
     <span>🖥 Console <span id="consoleCount">(0)</span></span>
@@ -235,118 +162,61 @@ input[type="file"] { display: none !important; }
   </div>
   <div class="console-body" id="consoleBody"></div>
 </div>
+
 <div class="status-bar">
-  <span id="statusInfo">سطر 1، عمود 1</span>
+  <span id="statusInfo">سطر 1</span>
   <span id="statusStats">0 كلمة</span>
 </div>
+
 <div class="modal" id="snippetsModal" onclick="if(event.target===this)closeSnippets()">
   <div class="modal-content">
     <span class="close-modal" onclick="closeSnippets()">✕</span>
-    <h2>📚 أمثلة جاهزة</h2>
+    <h2 style="margin-bottom:15px;color:#4ec9b0">📚 أمثلة جاهزة</h2>
     <div id="snippetsList"></div>
   </div>
 </div>
+
 <div class="toast" id="toast"></div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs/loader.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prettier/3.1.0/standalone.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prettier/3.1.0/plugins/html.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prettier/3.1.0/plugins/postcss.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prettier/3.1.0/plugins/babel.js"></script>
+
 <script>
 (function(){
 'use strict';
-
-if (typeof Promise === 'undefined' || typeof Object.assign === 'undefined') {
-  document.body.innerHTML = '<div style="padding:40px;text-align:center;color:#fff;font-family:sans-serif"><h1>⚠ متصفح قديم</h1><p>من فضلك حدّث المتصفح لاستخدام المحرر (Chrome / Firefox / Edge / Safari حديث).</p></div>';
-  return;
-}
-
-var state = {
-  tabs: [],
-  activeTabId: null,
-  models: {},
-  livePreview: true,
-  consoleCount: 0,
-  debounceTimer: null
-};
+var state = { tabs: [], activeTabId: null, models: {}, consoleCount: 0, debounceTimer: null };
 var editor = null;
-var monacoReady = false;
 var tabCounter = 0;
 var STORAGE_KEY = 'smart_editor_v1';
-var THEME_KEY = 'smart_editor_theme';
-var FONT_KEY = 'smart_editor_font';
 
 var DEFAULT_CODE = '<!DOCTYPE html>\n<html lang="ar" dir="rtl">\n<head>\n  <meta charset="UTF-8">\n  <style>\n    body { font-family:system-ui; text-align:center; padding:50px; background:linear-gradient(135deg,#667eea,#764ba2); color:white; }\n    button { padding:12px 24px; font-size:16px; border:none; border-radius:8px; cursor:pointer; background:white; color:#333; }\n  </style>\n</head>\n<body>\n  <h1>مرحبا بالعالم 👋</h1>\n  <p>ابدأ اكتب كودك هنا وشوف النتيجة فوراً!</p>\n  <button onclick="console.log(\'تم الضغط!\')">اضغطني</button>\n  <script>console.log("أهلاً بيك في المحرر الذكي!");<\/script>\n</body>\n</html>';
 
 var SNIPPETS = [
   {name:'زر تفاعلي', desc:'زر مع تأثير Hover', lang:'html', code:'<button class="btn">اضغطني</button>\n<style>\n.btn { padding:12px 24px; background:#4CAF50; color:white; border:none; border-radius:8px; cursor:pointer; }\n.btn:hover { background:#45a049; transform:scale(1.05); }\n</style>'},
-  {name:'نموذج تسجيل', desc:'نموذج Login بسيط', lang:'html', code:'<form onsubmit="event.preventDefault(); alert(\'تم\')">\n  <input type="text" placeholder="الاسم" required>\n  <input type="email" placeholder="البريد" required>\n  <input type="password" placeholder="كلمة المرور" required>\n  <button>تسجيل</button>\n</form>\n<style>\nform { display:flex; flex-direction:column; gap:10px; max-width:300px; margin:auto; }\ninput, button { padding:10px; border-radius:6px; border:1px solid #ccc; }\nbutton { background:#4CAF50; color:white; border:none; cursor:pointer; }\n</style>'},
-  {name:'Fetch API', desc:'جلب بيانات من API', lang:'javascript', code:'fetch("https://jsonplaceholder.typicode.com/posts/1")\n  .then(function(r){ return r.json(); })\n  .then(function(d){ console.log(d); })\n  .catch(function(e){ console.error(e); });'},
-  {name:'Flexbox Grid', desc:'شبكة Responsive', lang:'html', code:'<div class="grid"><div>1</div><div>2</div><div>3</div><div>4</div><div>5</div><div>6</div></div>\n<style>\n.grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(100px,1fr)); gap:10px; }\n.grid > div { background:#4CAF50; color:white; padding:20px; text-align:center; border-radius:8px; }\n</style>'},
-  {name:'Counter', desc:'عداد بسيط', lang:'html', code:'<h1 id="c">0</h1>\n<button onclick="ch(1)">+</button>\n<button onclick="ch(-1)">-</button>\n<script>\nvar n=0; function ch(d){ n+=d; document.getElementById("c").textContent=n; }\n<\/script>'},
-  {name:'Dark Mode', desc:'تبديل الوضع الداكن', lang:'html', code:'<button onclick="document.body.classList.toggle(\'dark\')">تبديل</button>\n<style>\nbody{transition:.3s;padding:30px}\nbody.dark{background:#222;color:#fff}\nbutton{padding:10px 20px;cursor:pointer}\n</style>'},
-  {name:'Async/Await', desc:'نموذج غير متزامن', lang:'javascript', code:'async function getUser(){\n  try {\n    const r = await fetch("https://jsonplaceholder.typicode.com/users/1");\n    const u = await r.json();\n    console.log(u);\n  } catch(e) { console.error(e); }\n}\ngetUser();'},
-  {name:'Loop مصفوفة', desc:'forEach و map', lang:'javascript', code:'const nums=[1,2,3,4,5];\nnums.forEach(function(n){ console.log(n); });\nconsole.log(nums.map(function(n){ return n*2; }));'}
+  {name:'Fetch API', desc:'جلب بيانات', lang:'javascript', code:'fetch("https://jsonplaceholder.typicode.com/posts/1")\n  .then(function(r){ return r.json(); })\n  .then(function(d){ console.log(d); });'}
 ];
 
 function showToast(msg){
   var t = document.getElementById('toast');
-  if(!t) return;
-  t.textContent = msg;
-  t.classList.add('show');
-  clearTimeout(t._t);
-  t._t = setTimeout(function(){ t.classList.remove('show'); }, 1800);
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(t._t); t._t = setTimeout(function(){ t.classList.remove('show'); }, 1800);
 }
 
 function debounce(fn, wait){
-  return function(){
-    var args = arguments, ctx = this;
-    clearTimeout(state.debounceTimer);
-    state.debounceTimer = setTimeout(function(){ fn.apply(ctx, args); }, wait);
-  };
+  return function(){ var ctx = this, args = arguments; clearTimeout(state.debounceTimer); state.debounceTimer = setTimeout(function(){ fn.apply(ctx, args); }, wait); };
 }
 
-function getActiveModel(){
-  if(!state.activeTabId) return null;
-  return state.models[state.activeTabId] || null;
-}
-
-function getModelValue(){
-  var m = getActiveModel();
-  return m ? m.getValue() : '';
-}
-
-function escapeHtml(s){
-  return String(s).replace(/[&<>"']/g, function(c){
-    return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c];
-  });
-}
-
-function safeStringify(o){
-  try {
-    if(typeof o === 'object' && o !== null) return JSON.stringify(o);
-    return String(o);
-  } catch(e){ return String(o); }
-}
+function getActiveModel(){ return state.activeTabId ? state.models[state.activeTabId] : null; }
+function getModelValue(){ var m = getActiveModel(); return m ? m.getValue() : ''; }
 
 function saveToStorage(){
   try {
-    var data = {
-      tabs: state.tabs.map(function(t){
-        var m = state.models[t.id];
-        return { id: t.id, name: t.name, language: t.language, content: m ? m.getValue() : '' };
-      }),
-      activeTabId: state.activeTabId
-    };
+    var data = { tabs: state.tabs.map(function(t){ var m = state.models[t.id]; return { id: t.id, name: t.name, language: t.language, content: m ? m.getValue() : '' }; }), activeTabId: state.activeTabId };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
   } catch(e){}
-}
-
-function loadFromStorage(){
-  try {
-    var r = localStorage.getItem(STORAGE_KEY);
-    return r ? JSON.parse(r) : null;
-  } catch(e){ return null; }
 }
 
 function createTab(name, language, content){
@@ -354,18 +224,13 @@ function createTab(name, language, content){
   var model = monaco.editor.createModel(content, language || 'html');
   state.models[id] = model;
   state.tabs.push({ id: id, name: name || ('ملف ' + tabCounter), language: language || 'html' });
-  model.onDidChangeContent(debounce(function(){
-    saveToStorage();
-    updateStatus();
-    if(state.livePreview) runCode();
-  }, 400));
+  model.onDidChangeContent(debounce(function(){ saveToStorage(); updateStatus(); runCode(); }, 500));
   return id;
 }
 
 function addNewTab(content, language, name){
   var id = createTab(name, language, content || '<!-- كود جديد -->');
-  switchTab(id);
-  renderTabs();
+  switchTab(id); renderTabs();
 }
 
 function switchTab(id){
@@ -373,599 +238,246 @@ function switchTab(id){
   state.activeTabId = id;
   editor.setModel(state.models[id]);
   var t = null;
-  for(var i=0; i<state.tabs.length; i++){
-    if(state.tabs[i].id === id){ t = state.tabs[i]; break; }
-  }
-  if(t){
-    document.getElementById('langSelect').value = t.language;
-    monaco.editor.setModelLanguage(state.models[id], t.language);
-  }
-  renderTabs();
-  updateStatus();
-  saveToStorage();
+  for(var i=0; i<state.tabs.length; i++){ if(state.tabs[i].id === id){ t = state.tabs[i]; break; } }
+  if(t){ document.getElementById('langSelect').value = t.language; monaco.editor.setModelLanguage(state.models[id], t.language); }
+  renderTabs(); updateStatus(); saveToStorage();
 }
 
 function closeTab(id, ev){
   if(ev){ ev.stopPropagation(); ev.preventDefault(); }
   var idx = -1;
-  for(var i=0; i<state.tabs.length; i++){
-    if(state.tabs[i].id === id){ idx = i; break; }
-  }
+  for(var i=0; i<state.tabs.length; i++){ if(state.tabs[i].id === id){ idx = i; break; } }
   if(idx === -1) return;
   state.tabs.splice(idx, 1);
-  var m = state.models[id];
-  if(m) m.dispose();
+  if(state.models[id]) state.models[id].dispose();
   delete state.models[id];
   if(state.activeTabId === id){
-    if(state.tabs.length > 0){
-      var n = Math.min(idx, state.tabs.length - 1);
-      switchTab(state.tabs[n].id);
-    } else {
-      state.activeTabId = null;
-      editor.setModel(null);
-    }
+    if(state.tabs.length > 0) switchTab(state.tabs[Math.min(idx, state.tabs.length - 1)].id);
+    else { state.activeTabId = null; editor.setModel(null); }
   }
-  renderTabs();
-  saveToStorage();
+  renderTabs(); saveToStorage();
 }
 
 function renderTabs(){
-  var bar = document.getElementById('tabsBar');
-  bar.innerHTML = '';
-  var addBtn = document.createElement('div');
-  addBtn.className = 'tab-add';
-  addBtn.textContent = '+';
-  addBtn.title = 'ملف جديد';
-  addBtn.onclick = function(){ addNewTab(); };
-  bar.appendChild(addBtn);
+  var bar = document.getElementById('tabsBar'); bar.innerHTML = '';
+  var addBtn = document.createElement('div'); addBtn.className = 'tab-add'; addBtn.textContent = '+';
+  addBtn.onclick = function(){ addNewTab(); }; bar.appendChild(addBtn);
 
   state.tabs.forEach(function(t){
     var d = document.createElement('div');
     d.className = 'tab' + (t.id === state.activeTabId ? ' active' : '');
     d.onclick = function(){ switchTab(t.id); };
-
-    var nameSpan = document.createElement('span');
-    nameSpan.textContent = t.name;
-    d.appendChild(nameSpan);
-
-    var closeSpan = document.createElement('span');
-    closeSpan.className = 'close';
-    closeSpan.textContent = '✕';
-    closeSpan.onclick = function(e){ closeTab(t.id, e); };
-    d.appendChild(closeSpan);
-
+    var nameSpan = document.createElement('span'); nameSpan.textContent = t.name; d.appendChild(nameSpan);
+    var closeSpan = document.createElement('span'); closeSpan.className = 'close'; closeSpan.textContent = '✕';
+    closeSpan.onclick = function(e){ closeTab(t.id, e); }; d.appendChild(closeSpan);
     bar.appendChild(d);
   });
 }
 
 function initEditor(){
-  var savedTheme = 'vs-dark';
-  var savedFont = 14;
-  try {
-    savedTheme = localStorage.getItem(THEME_KEY) || 'vs-dark';
-    savedFont = parseInt(localStorage.getItem(FONT_KEY), 10) || 14;
-  } catch(e){}
-
-  document.getElementById('themeSelect').value = savedTheme;
+  // كشف إذا كان المستخدم على موبايل
+  var isMobile = window.innerWidth <= 768;
+  var defaultSplit = isMobile ? 'split-horizontal' : 'split';
+  
+  if(isMobile) {
+    document.getElementById('splitSelect').value = 'split-horizontal';
+    document.getElementById('mainContainer').classList.add('split-horizontal');
+  }
 
   editor = monaco.editor.create(document.getElementById('editor'), {
-    theme: savedTheme,
-    fontSize: savedFont,
+    theme: 'vs-dark',
+    fontSize: isMobile ? 13 : 14,
     automaticLayout: true,
-    minimap: { enabled: true },
+    minimap: { enabled: !isMobile }, // إخفاء الخريطة على الموبايل
     wordWrap: 'on',
     scrollBeyondLastLine: false,
-    tabSize: 2,
-    suggestOnTriggerCharacters: true,
-    quickSuggestions: true,
-    fontFamily: 'Consolas, Monaco, "Courier New", monospace'
-  });
-
-  monacoReady = true;
-  setTheme(savedTheme);
-
-  editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, function(){
-    saveToStorage();
-    showToast('✅ تم الحفظ');
+    fontFamily: 'Consolas, Monaco, monospace'
   });
 
   editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, runCode);
-
   editor.onDidChangeCursorPosition(function(e){
-    var el = document.getElementById('statusInfo');
-    if(el) el.textContent = 'سطر ' + e.position.lineNumber + '، عمود ' + e.position.column;
+    document.getElementById('statusInfo').textContent = 'سطر ' + e.position.lineNumber + '، عمود ' + e.position.column;
   });
 
-  registerAutocomplete();
-  loadInitialTabs();
-  renderTabs();
-  updateStatus();
-  runCode();
-}
-
-function registerAutocomplete(){
-  try {
-    var rule = monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet;
-    monaco.languages.registerCompletionItemProvider('javascript', {
-      provideCompletionItems: function(){
-        return {
-          suggestions: [
-            { label:'clg', kind: monaco.languages.CompletionItemKind.Snippet, insertText:'console.log($1);', insertTextRules: rule, documentation:'console.log' },
-            { label:'fn', kind: monaco.languages.CompletionItemKind.Snippet, insertText:'function ${1:name}(${2:params}) {\n\t$0\n}', insertTextRules: rule },
-            { label:'afn', kind: monaco.languages.CompletionItemKind.Snippet, insertText:'async function ${1:name}(${2:params}) {\n\t$0\n}', insertTextRules: rule },
-            { label:'forof', kind: monaco.languages.CompletionItemKind.Snippet, insertText:'for (const ${1:item} of ${2:arr}) {\n\t$0\n}', insertTextRules: rule },
-            { label:'tryc', kind: monaco.languages.CompletionItemKind.Snippet, insertText:'try {\n\t$1\n} catch (${2:err}) {\n\t$0\n}', insertTextRules: rule }
-          ]
-        };
-      }
-    });
-  } catch(e){}
-}
-
-function loadInitialTabs(){
-  var saved = loadFromStorage();
+  // تحميل الملفات المحفوظة
+  var saved = null;
+  try { saved = JSON.parse(localStorage.getItem(STORAGE_KEY)); } catch(e){}
+  
   if(saved && saved.tabs && saved.tabs.length > 0){
     saved.tabs.forEach(function(t){
       var m = monaco.editor.createModel(t.content, t.language);
-      state.models[t.id] = m;
-      state.tabs.push({ id: t.id, name: t.name, language: t.language });
-      var num = parseInt(t.id.replace('tab_', ''), 10) || 0;
-      if(num > tabCounter) tabCounter = num;
-      m.onDidChangeContent(debounce(function(){
-        saveToStorage();
-        updateStatus();
-        if(state.livePreview) runCode();
-      }, 400));
+      state.models[t.id] = m; state.tabs.push({ id: t.id, name: t.name, language: t.language });
+      var num = parseInt(t.id.replace('tab_', ''), 10) || 0; if(num > tabCounter) tabCounter = num;
+      m.onDidChangeContent(debounce(function(){ saveToStorage(); updateStatus(); runCode(); }, 500));
     });
-    var activeId = saved.activeTabId && state.models[saved.activeTabId] ? saved.activeTabId : state.tabs[0].id;
-    switchTab(activeId);
+    switchTab(saved.activeTabId && state.models[saved.activeTabId] ? saved.activeTabId : state.tabs[0].id);
   } else {
     addNewTab(DEFAULT_CODE, 'html', 'index.html');
   }
-  checkShareLink();
+  renderTabs(); updateStatus(); runCode();
 }
 
-var CONSOLE_INJECT = '<script>(function(){' +
-  'var s=function(l,a){try{parent.postMessage({type:"console",level:l,args:a.map(function(x){try{return typeof x==="object"&&x!==null?JSON.stringify(x):String(x);}catch(e){return String(x);}})}, "*");}catch(e){}};' +
-  '["log","error","warn","info"].forEach(function(m){var o=console[m];console[m]=function(){var a=[].slice.call(arguments);s(m,a);if(o)o.apply(console,a);};});' +
-  'window.onerror=function(msg,url,line){s("error",[msg+(line?" (سطر "+line+")":"")]);};' +
-  '})();<\/script>';
+var CONSOLE_INJECT = '<script>(function(){var s=function(l,a){try{parent.postMessage({type:"console",level:l,args:a.map(function(x){try{return typeof x==="object"&&x!==null?JSON.stringify(x):String(x);}catch(e){return String(x);}})}, "*");}catch(e){}};["log","error","warn","info"].forEach(function(m){var o=console[m];console[m]=function(){var a=[].slice.call(arguments);s(m,a);if(o)o.apply(console,a);};});window.onerror=function(msg,url,line){s("error",[msg+(line?" (سطر "+line+")":"")]);};})();<\/script>';
 
 function runCode(){
-  if(!monacoReady || !state.activeTabId) return;
+  if(!state.activeTabId) return;
   var code = getModelValue();
   var lang = document.getElementById('langSelect').value;
   var preview = document.getElementById('preview');
-  clearConsole();
+  document.getElementById('consoleBody').innerHTML = ''; state.consoleCount = 0;
+  document.getElementById('consoleCount').textContent = '(0)';
+  
   var srcdoc = '';
-
   if(lang === 'html'){
-    if(code.indexOf('</head>') !== -1){
-      srcdoc = code.replace('</head>', CONSOLE_INJECT + '</head>');
-    } else if(/<head[^>]*>/i.test(code)){
-      srcdoc = code.replace(/<head[^>]*>/i, function(m){ return m + CONSOLE_INJECT; });
-    } else if(/<body[^>]*>/i.test(code)){
-      srcdoc = code.replace(/<body[^>]*>/i, function(m){ return m + CONSOLE_INJECT; });
-    } else {
-      srcdoc = CONSOLE_INJECT + code;
-    }
-  } else if(lang === 'css'){
-    srcdoc = CONSOLE_INJECT + '<style>' + code + '</style><div class="test" style="padding:20px;font-family:system-ui">اختبار CSS</div>';
-  } else if(lang === 'javascript' || lang === 'typescript'){
-    srcdoc = CONSOLE_INJECT + '<body style="font-family:monospace;padding:20px;background:#1e1e1e;color:#fff"><h3>نتيجة التنفيذ:</h3><div id="out"></div><script>var out=document.getElementById("out");var ol=console.log;console.log=function(){out.innerHTML+="<div>› "+[].slice.call(arguments).map(function(x){return typeof x==="object"?JSON.stringify(x):x;}).join(" ")+"</div>";ol.apply(console,arguments);};' + code + '<\/script></body>';
-  } else if(lang === 'json'){
-    try {
-      var p = JSON.parse(code);
-      srcdoc = CONSOLE_INJECT + '<pre style="padding:20px;background:#1e1e1e;color:#fff">' + escapeHtml(JSON.stringify(p, null, 2)) + '</pre>';
-    } catch(e){
-      srcdoc = '<pre style="padding:20px;color:red;font-family:monospace">JSON غير صالح: ' + escapeHtml(e.message) + '</pre>';
-    }
-  } else if(lang === 'markdown'){
-    var safe = code.replace(/\\/g, '\\\\').replace(/`/g, '\\`').replace(/\$\{/g, '\\${');
-    srcdoc = '<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body><div id="md" style="padding:20px;font-family:system-ui;line-height:1.6"></div><script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"><\/script><script>window.addEventListener("load",function(){document.getElementById("md").innerHTML=marked.parse(`' + safe + '`);});<\/script></body></html>';
+    if(code.indexOf('</head>') !== -1) srcdoc = code.replace('</head>', CONSOLE_INJECT + '</head>');
+    else if(/<body[^>]*>/i.test(code)) srcdoc = code.replace(/<body[^>]*>/i, function(m){ return m + CONSOLE_INJECT; });
+    else srcdoc = CONSOLE_INJECT + code;
+  } else if(lang === 'javascript'){
+    srcdoc = CONSOLE_INJECT + '<body style="font-family:monospace;padding:20px;background:#1e1e1e;color:#fff"><script>' + code + '<\/script></body>';
   } else {
-    srcdoc = '<pre style="padding:20px;font-family:monospace">لغة ' + lang + ' مش مدعومة في المعاينة المباشرة.</pre>';
+    srcdoc = '<pre style="padding:20px;font-family:monospace">هذه اللغة غير مدعومة للمعاينة.</pre>';
   }
-
-  try {
-    preview.srcdoc = srcdoc;
-  } catch(e){
-    preview.contentWindow.document.open();
-    preview.contentWindow.document.write(srcdoc);
-    preview.contentWindow.document.close();
-  }
+  preview.srcdoc = srcdoc;
   updateStatus();
 }
 
 window.addEventListener('message', function(e){
   if(e.data && e.data.type === 'console'){
-    addConsoleLine(e.data.level, (e.data.args || []).join(' '));
+    var b = document.getElementById('consoleBody');
+    var l = document.createElement('div');
+    l.className = 'console-line ' + (e.data.level || 'log');
+    l.textContent = '› ' + (e.data.args || []).join(' ');
+    b.appendChild(l); b.scrollTop = b.scrollHeight;
+    state.consoleCount++; document.getElementById('consoleCount').textContent = '(' + state.consoleCount + ')';
   }
-}, false);
+});
 
-function addConsoleLine(level, text){
-  var b = document.getElementById('consoleBody');
-  var l = document.createElement('div');
-  l.className = 'console-line ' + (level || 'log');
-  var icons = { log:'›', error:'✕', warn:'⚠', info:'ℹ' };
-  l.textContent = (icons[level] || '›') + ' ' + text;
-  b.appendChild(l);
-  b.scrollTop = b.scrollHeight;
-  state.consoleCount++;
-  document.getElementById('consoleCount').textContent = '(' + state.consoleCount + ')';
-}
-
-function clearConsole(){
-  document.getElementById('consoleBody').innerHTML = '';
-  state.consoleCount = 0;
-  document.getElementById('consoleCount').textContent = '(0)';
-}
-
-function toggleConsole(){
-  document.getElementById('consolePanel').classList.toggle('collapsed');
-}
+function toggleConsole(){ document.getElementById('consolePanel').classList.toggle('collapsed'); }
 
 function copyTextToClipboard(text, onSuccess, onError){
   if(navigator.clipboard && navigator.clipboard.writeText){
-    navigator.clipboard.writeText(text).then(onSuccess).catch(function(){
-      legacyCopy(text, onSuccess, onError);
-    });
-  } else {
-    legacyCopy(text, onSuccess, onError);
-  }
+    navigator.clipboard.writeText(text).then(onSuccess).catch(function(){ legacyCopy(text, onSuccess, onError); });
+  } else { legacyCopy(text, onSuccess, onError); }
 }
 
 function legacyCopy(text, onSuccess, onError){
   try {
-    var ta = document.createElement('textarea');
-    ta.value = text;
-    ta.style.position = 'fixed';
-    ta.style.top = '0';
-    ta.style.left = '-9999px';
-    ta.style.opacity = '0';
-    ta.setAttribute('readonly', '');
-    document.body.appendChild(ta);
-    ta.select();
-    ta.setSelectionRange(0, ta.value.length);
-    var ok = false;
-    try { ok = document.execCommand('copy'); } catch(e){ ok = false; }
-    document.body.removeChild(ta);
-    if(ok && onSuccess) onSuccess();
-    else if(onError) onError();
-    else prompt('انسخ يدوياً:', text);
-  } catch(e){
-    if(onError) onError();
-    else prompt('انسخ يدوياً:', text);
-  }
+    var ta = document.createElement('textarea'); ta.value = text;
+    ta.style.position = 'fixed'; ta.style.left = '-9999px';
+    document.body.appendChild(ta); ta.select();
+    var ok = document.execCommand('copy'); document.body.removeChild(ta);
+    if(ok && onSuccess) onSuccess(); else if(onError) onError();
+  } catch(e){ if(onError) onError(); }
 }
 
 function copyCode(){
   if(!getActiveModel()) return;
-  copyTextToClipboard(getModelValue(), function(){
-    showToast('✅ تم النسخ');
-  }, function(){
-    prompt('انسخ يدوياً:', getModelValue());
-  });
+  copyTextToClipboard(getModelValue(), function(){ showToast('✅ تم النسخ'); }, function(){ prompt('انسخ يدوياً:', getModelValue()); });
 }
 
 function downloadFile(){
   if(!getActiveModel()) return;
   var lang = document.getElementById('langSelect').value;
-  var extMap = { html:'html', javascript:'js', css:'css', typescript:'ts', json:'json', markdown:'md', python:'py', sql:'sql' };
+  var extMap = { html:'html', javascript:'js', css:'css', json:'json' };
   var ext = extMap[lang] || 'txt';
-  var name = 'code';
-  for(var i=0; i<state.tabs.length; i++){
-    if(state.tabs[i].id === state.activeTabId){
-      name = state.tabs[i].name.replace(/\.[^.]+$/, '');
-      break;
-    }
-  }
-  var code = getModelValue();
-  try {
-    var blob = new Blob([code], { type: 'text/plain;charset=utf-8' });
-    if(window.navigator && window.navigator.msSaveOrOpenBlob){
-      window.navigator.msSaveOrOpenBlob(blob, name + '.' + ext);
-    } else {
-      var a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = name + '.' + ext;
-      document.body.appendChild(a);
-      a.click();
-      setTimeout(function(){
-        URL.revokeObjectURL(a.href);
-        document.body.removeChild(a);
-      }, 100);
-    }
-    showToast('⬇ تم التحميل');
-  } catch(e){
-    showToast('❌ ' + e.message);
-  }
+  var blob = new Blob([getModelValue()], { type: 'text/plain;charset=utf-8' });
+  var a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  a.download = 'code.' + ext; document.body.appendChild(a); a.click();
+  setTimeout(function(){ URL.revokeObjectURL(a.href); document.body.removeChild(a); }, 100);
+  showToast('⬇ تم التحميل');
 }
 
-function triggerUpload(){
-  document.getElementById('fileInput').click();
-}
+function triggerUpload(){ document.getElementById('fileInput').click(); }
 
 document.getElementById('fileInput').addEventListener('change', function(e){
-  var f = e.target.files && e.target.files[0];
-  if(!f) return;
+  var f = e.target.files[0]; if(!f) return;
   var reader = new FileReader();
   reader.onload = function(ev){
     var ext = f.name.split('.').pop().toLowerCase();
-    var map = { html:'html', htm:'html', js:'javascript', css:'css', ts:'typescript', json:'json', md:'markdown', py:'python', sql:'sql' };
+    var map = { html:'html', js:'javascript', css:'css', json:'json' };
     addNewTab(ev.target.result, map[ext] || 'plaintext', f.name);
     showToast('⬆ تم الرفع');
   };
-  reader.readAsText(f);
-  e.target.value = '';
+  reader.readAsText(f); e.target.value = '';
 });
 
 function formatCode(){
   if(!getActiveModel()) return;
-  var code = getModelValue();
-  var lang = document.getElementById('langSelect').value;
-
-  if(typeof prettier === 'undefined'){
-    showToast('⚠ Prettier لم يُحمّل');
+  var code = getModelValue(); var lang = document.getElementById('langSelect').value;
+  if(lang === 'json'){
+    try { editor.setValue(JSON.stringify(JSON.parse(code), null, 2)); showToast('✨ تم التنسيق'); }
+    catch(e) { showToast('❌ JSON غير صالح'); }
     return;
   }
-
+  if(typeof prettier === 'undefined') return showToast('⚠ Prettier لم يُحمل');
   var promise = null;
+  if(lang === 'html') promise = prettier.format(code, { parser: 'html', plugins: [prettierPlugins.html] });
+  else if(lang === 'css') promise = prettier.format(code, { parser: 'css', plugins: [prettierPlugins.postcss] });
+  else if(lang === 'javascript') promise = prettier.format(code, { parser: 'babel', plugins: [prettierPlugins.babel] });
+  else return showToast('⚠ التنسيق غير مدعوم');
 
-  try {
-    if(lang === 'html'){
-      promise = prettier.format(code, { parser: 'html', plugins: [prettierPlugins.html], tabWidth: 2 });
-    } else if(lang === 'css'){
-      promise = prettier.format(code, { parser: 'css', plugins: [prettierPlugins.postcss], tabWidth: 2 });
-    } else if(lang === 'javascript'){
-      promise = prettier.format(code, { parser: 'babel', plugins: [prettierPlugins.babel], tabWidth: 2 });
-    } else if(lang === 'typescript'){
-      promise = prettier.format(code, { parser: 'typescript', plugins: [prettierPlugins.babel], tabWidth: 2 });
-    } else if(lang === 'json'){
-      var parsed = JSON.parse(code);
-      editor.setValue(JSON.stringify(parsed, null, 2));
-      showToast('✨ تم التنسيق');
-      return;
-    } else {
-      showToast('⚠ التنسيق غير مدعوم لهذه اللغة');
-      return;
-    }
-  } catch(e){
-    showToast('❌ ' + e.message.substring(0, 50));
-    return;
-  }
-
-  if(promise && promise.then){
-    promise.then(function(formatted){
-      editor.setValue(formatted);
-      showToast('✨ تم التنسيق');
-    }).catch(function(e){
-      showToast('❌ ' + (e.message || '').substring(0, 50));
-    });
-  }
+  if(promise) promise.then(function(f){ editor.setValue(f); showToast('✨ تم التنسيق'); }).catch(function(e){ showToast('❌ خطأ في التنسيق'); });
 }
 
-function changeFontSize(delta){
+function changeFontSize(d){
   if(!editor) return;
   var cur = editor.getOption(monaco.editor.EditorOption.fontSize);
-  var next = Math.max(10, Math.min(30, cur + delta));
-  editor.updateOptions({ fontSize: next });
-  try { localStorage.setItem(FONT_KEY, next); } catch(e){}
-  showToast('حجم الخط: ' + next);
+  editor.updateOptions({ fontSize: Math.max(10, Math.min(30, cur + d)) });
+  showToast('حجم الخط تغير');
 }
 
 function toggleTheme(){
-  var themes = ['vs-dark', 'vs', 'hc-black'];
-  var cur = document.getElementById('themeSelect').value;
-  var idx = themes.indexOf(cur);
-  var next = themes[(idx + 1) % themes.length];
-  document.getElementById('themeSelect').value = next;
-  setTheme(next);
+  var isLight = document.body.classList.contains('light');
+  document.body.classList.toggle('light');
+  monaco.editor.setTheme(isLight ? 'vs-dark' : 'vs');
 }
-
-function setTheme(t){
-  monaco.editor.setTheme(t);
-  try { localStorage.setItem(THEME_KEY, t); } catch(e){}
-  if(t === 'vs') document.body.classList.add('light');
-  else document.body.classList.remove('light');
-}
-
-document.getElementById('themeSelect').addEventListener('change', function(e){
-  setTheme(e.target.value);
-});
 
 document.getElementById('langSelect').addEventListener('change', function(e){
-  var m = getActiveModel();
-  if(!m) return;
+  var m = getActiveModel(); if(!m) return;
   monaco.editor.setModelLanguage(m, e.target.value);
-  for(var i=0; i<state.tabs.length; i++){
-    if(state.tabs[i].id === state.activeTabId){
-      state.tabs[i].language = e.target.value;
-      break;
-    }
-  }
-  saveToStorage();
+  for(var i=0; i<state.tabs.length; i++){ if(state.tabs[i].id === state.activeTabId){ state.tabs[i].language = e.target.value; break; } }
+  saveToStorage(); runCode();
 });
 
 document.getElementById('splitSelect').addEventListener('change', function(e){
   var c = document.getElementById('mainContainer');
-  c.classList.remove('split-horizontal');
-  c.classList.remove('hide-preview');
-  c.classList.remove('hide-editor');
-  var editorEl = document.getElementById('editor');
-  editorEl.style.flex = '';
-  editorEl.style.webkitFlex = '';
-  var v = e.target.value;
-  if(v === 'split-horizontal') c.classList.add('split-horizontal');
-  else if(v === 'editor-only') c.classList.add('hide-preview');
-  else if(v === 'preview-only') c.classList.add('hide-editor');
-  if(editor) editor.layout();
+  c.classList.remove('split-horizontal', 'hide-preview', 'hide-editor');
+  if(e.target.value === 'split-horizontal') c.classList.add('split-horizontal');
+  else if(e.target.value === 'editor-only') c.classList.add('hide-preview');
+  else if(e.target.value === 'preview-only') c.classList.add('hide-editor');
+  if(editor) setTimeout(function(){ editor.layout(); }, 100);
 });
 
-(function setupResizer(){
-  var r = document.getElementById('resizer');
-  var ed = document.getElementById('editor');
-  var container = document.getElementById('mainContainer');
-  var dragging = false, startPos = 0, startSize = 0, horizontal = false;
-
-  function start(clientX, clientY){
-    dragging = true;
-    horizontal = container.classList.contains('split-horizontal');
-    startPos = horizontal ? clientY : clientX;
-    var rect = ed.getBoundingClientRect();
-    startSize = horizontal ? rect.height : rect.width;
-    document.body.style.userSelect = 'none';
-    document.body.style.webkitUserSelect = 'none';
-  }
-  function move(clientX, clientY){
-    if(!dragging) return;
-    var pos = horizontal ? clientY : clientX;
-    var delta = pos - startPos;
-    var next = Math.max(100, startSize + delta);
-    ed.style.flex = '0 0 ' + next + 'px';
-    ed.style.webkitFlex = '0 0 ' + next + 'px';
-    if(editor) editor.layout();
-  }
-  function end(){
-    dragging = false;
-    document.body.style.userSelect = '';
-    document.body.style.webkitUserSelect = '';
-  }
-
-  r.addEventListener('mousedown', function(e){ e.preventDefault(); start(e.clientX, e.clientY); });
-  window.addEventListener('mousemove', function(e){ move(e.clientX, e.clientY); });
-  window.addEventListener('mouseup', end);
-  r.addEventListener('touchstart', function(e){ if(e.touches[0]){ e.preventDefault(); start(e.touches[0].clientX, e.touches[0].clientY); } }, { passive: false });
-  window.addEventListener('touchmove', function(e){ if(e.touches[0]) move(e.touches[0].clientX, e.touches[0].clientY); }, { passive: true });
-  window.addEventListener('touchend', end);
-})();
-
 function openSnippets(){
-  var list = document.getElementById('snippetsList');
-  list.innerHTML = '';
+  var list = document.getElementById('snippetsList'); list.innerHTML = '';
   SNIPPETS.forEach(function(s){
-    var d = document.createElement('div');
-    d.className = 'snippet-item';
-    var h = document.createElement('h3');
-    h.textContent = s.name;
-    var p = document.createElement('p');
-    p.textContent = s.desc;
-    d.appendChild(h);
-    d.appendChild(p);
-    d.onclick = function(){
-      addNewTab(s.code, s.lang, s.name);
-      closeSnippets();
-      showToast('✅ تم الإضافة');
-    };
+    var d = document.createElement('div'); d.className = 'snippet-item';
+    d.innerHTML = '<h3>' + s.name + '</h3><p>' + s.desc + '</p>';
+    d.onclick = function(){ addNewTab(s.code, s.lang, s.name); closeSnippets(); showToast('✅ تم الإضافة'); };
     list.appendChild(d);
   });
   document.getElementById('snippetsModal').classList.add('open');
 }
-
-function closeSnippets(){
-  document.getElementById('snippetsModal').classList.remove('open');
-}
-
-function unicodeToBase64(str){
-  return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, function(m, p1){
-    return String.fromCharCode(parseInt(p1, 16));
-  }));
-}
-
-function base64ToUnicode(str){
-  return decodeURIComponent(atob(str).split('').map(function(c){
-    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-  }).join(''));
-}
+function closeSnippets(){ document.getElementById('snippetsModal').classList.remove('open'); }
 
 function shareLink(){
   if(!getActiveModel()) return;
   try {
-    var code = getModelValue();
-    var lang = document.getElementById('langSelect').value;
-    var encoded = unicodeToBase64(JSON.stringify({ c: code, l: lang }));
-    var url = location.protocol + '//' + location.host + location.pathname + '#code=' + encoded;
-    copyTextToClipboard(url, function(){
-      showToast('🔗 تم نسخ الرابط');
-    }, function(){
-      prompt('انسخ الرابط:', url);
-    });
-  } catch(e){
-    showToast('❌ فشل');
-  }
-}
-
-function checkShareLink(){
-  if(location.hash.indexOf('#code=') !== 0) return;
-  try {
-    var encoded = location.hash.substring(6);
-    var decoded = base64ToUnicode(encoded);
-    var data = JSON.parse(decoded);
-    if(data.c && data.l){
-      var ext = data.l === 'javascript' ? 'js' : (data.l === 'html' ? 'html' : 'txt');
-      addNewTab(data.c, data.l, 'shared.' + ext);
-      if(history && history.replaceState) history.replaceState(null, '', location.pathname);
-      showToast('✅ تم تحميل الكود المشترك');
-    }
-  } catch(e){}
-}
-
-function exportImage(){
-  if(typeof html2canvas === 'undefined'){
-    showToast('⚠ html2canvas لم يُحمّل');
-    return;
-  }
-  try {
-    var el = document.getElementById('editor');
-    html2canvas(el, { backgroundColor: '#1e1e1e', scale: 2 }).then(function(canvas){
-      if(canvas.toBlob){
-        canvas.toBlob(function(blob){
-          var u = URL.createObjectURL(blob);
-          var a = document.createElement('a');
-          a.href = u;
-          a.download = 'code.png';
-          document.body.appendChild(a);
-          a.click();
-          setTimeout(function(){
-            URL.revokeObjectURL(u);
-            document.body.removeChild(a);
-          }, 100);
-          showToast('🖼 تم التصدير');
-        });
-      } else {
-        var url = canvas.toDataURL('image/png');
-        var a2 = document.createElement('a');
-        a2.href = url;
-        a2.download = 'code.png';
-        a2.click();
-        showToast('🖼 تم التصدير');
-      }
-    }).catch(function(e){
-      showToast('❌ ' + e.message);
-    });
-  } catch(e){
-    showToast('❌ ' + e.message);
-  }
+    var data = { c: getModelValue(), l: document.getElementById('langSelect').value };
+    var url = location.origin + location.pathname + '#code=' + btoa(unescape(encodeURIComponent(JSON.stringify(data))));
+    copyTextToClipboard(url, function(){ showToast('🔗 تم نسخ الرابط'); }, function(){ prompt('انسخ:', url); });
+  } catch(e) { showToast('❌ فشل'); }
 }
 
 function updateStatus(){
-  var m = getActiveModel();
-  if(!m) return;
+  var m = getActiveModel(); if(!m) return;
   var t = m.getValue();
-  var words = t.trim().split(/\s+/).filter(Boolean).length;
-  var el = document.getElementById('statusStats');
-  if(el) el.textContent = m.getLineCount() + ' سطر | ' + words + ' كلمة | ' + t.length + ' حرف';
-}
-
-function askAI(){
-  showToast('🤖 ميزة AI هتتوصل في المرحلة الجاية');
+  document.getElementById('statusStats').textContent = m.getLineCount() + ' سطر | ' + t.length + ' حرف';
 }
 
 require.config({ paths: { vs: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs' } });
 require(['vs/editor/editor.main'], initEditor);
-
 window.addEventListener('beforeunload', saveToStorage);
-
 })();
 </script>
 </body>
